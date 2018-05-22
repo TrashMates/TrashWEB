@@ -129,4 +129,15 @@ class TwitchEventController extends Controller
 
 		return $event;
 	}
+
+
+	/**
+	 * GET - Request the statistics
+	 *
+	 * @return Collection
+	 */
+	public function stats()
+	{
+		return TwitchEvent::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+	}
 }

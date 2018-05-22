@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class DiscordEvent extends Model
 {
@@ -19,5 +20,13 @@ class DiscordEvent extends Model
 	public function viewer()
 	{
 		return $this->BelongsTo(DiscordViewer::class, "userid");
+	}
+
+
+	public static function getStats()
+	{
+		return self::selectRaw("COUNT(*) AS count")->selectRaw("DATE(created_at) AS date")
+			->groupBy("date")
+			->orderBy("date", "ASC");
 	}
 }

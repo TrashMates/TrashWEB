@@ -154,4 +154,15 @@ class TwitchViewerController extends Controller
 
 		return $viewer;
 	}
+
+
+	/**
+	 * GET - Request the statistics
+	 *
+	 * @return Collection
+	 */
+	public function stats()
+	{
+		return TwitchViewer::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+	}
 }

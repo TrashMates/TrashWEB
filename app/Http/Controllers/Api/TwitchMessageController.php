@@ -140,4 +140,15 @@ class TwitchMessageController extends Controller
 
 		return $message;
 	}
+
+
+	/**
+	 * GET - Request the statistics
+	 *
+	 * @return Collection
+	 */
+	public function stats()
+	{
+		return TwitchMessage::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+	}
 }

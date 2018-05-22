@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateDiscordMessagesTable extends Migration
 {
@@ -13,7 +13,7 @@ class CreateDiscordMessagesTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('discord_messages', function (Blueprint $table) {
+		Schema::create('discord_messages', function(Blueprint $table) {
 			$table->bigInteger("id");
 			$table->bigInteger("userid");
 			$table->string("channel");

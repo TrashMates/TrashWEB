@@ -13,8 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
+
+// We don't want the Middleware here
+Route::group(["domain" => "api." . env("APP_URL")], function() {
+
+	Route::get("stats/twitch/events", "TwitchEventController@stats");
+	Route::get("stats/twitch/messages", "TwitchMessageController@stats");
+	Route::get("stats/twitch/viewers", "TwitchViewerController@stats");
+
+	Route::get("stats/discord/events", "DiscordEventController@stats");
+	Route::get("stats/discord/messages", "DiscordMessageController@stats");
+	Route::get("stats/discord/viewers", "DiscordViewerController@stats");
+});
+
 // "middleware" => "api" because we removed it from the RouteServiceProvider
-Route::group(["domain" => "api.trashmates.fr", "middleware" => "api"], function() {
+Route::group(["domain" => "api." . env("APP_URL"), "middleware" => "api"], function() {
 
 	/**
 	 * TWITCH ROUTES: Events
