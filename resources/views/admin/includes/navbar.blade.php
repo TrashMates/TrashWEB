@@ -6,6 +6,12 @@
             <a href="{{ route("admin.index") }}"><li>Index</li></a>
         </ul>
     </div>
+    <div class="menu">
+        <h5>TOOLS</h5>
+        <ul>
+            <a href="{{ route("admin.tool.game") }}"><li>Current Streamed Games</li></a>
+        </ul>
+    </div>
 
     <div class="menu">
         <h5>DISCORD</h5>

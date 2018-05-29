@@ -85,7 +85,7 @@ $(document).ready(function () {
 
     // ADMIN LISTING
     $(".toggleable").on("click", function (e) {
-        $(e.currentTarget).toggleClass("show");
+        $(e.currentTarget).parent().toggleClass("show");
     });
 });
 

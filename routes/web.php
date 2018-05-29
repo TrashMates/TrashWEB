@@ -12,13 +12,36 @@
 */
 
 // "middleware" => "web" because we removed it from the RouteServiceProvider
-Route::group(["domain" => env("APP_URL"), "middleware" => "web"], function() {
+Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => "web"], function() {
 
 	Route::get("/login", "AdminController@loginForm")->name("admin.login");
 	Route::post("/login", "AdminController@login");
 
+	Route::get("/logoff", "AdminController@logoff")->name("admin.logoff");
+
+});
+
+Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "auth"]], function() {
 
 	Route::get("/", "AdminController@index")->name("admin.index");
+
+
+	/**
+	 * DISCORD ROUTES: Events
+	 */
+	Route::get("discord/events", "DiscordEventController@index")->name("admin.discord.events");
+	Route::get("discord/events/{eventID}", "DiscordEventController@show");
+
+	/**
+	 * DISCORD ROUTES: Messages
+	 */
+	Route::get("discord/messages", "DiscordMessageController@index")->name("admin.discord.messages");
+	Route::get("discord/messages/{messageID}", "DiscordMessageController@show");
+	/**
+	 * DISCORD ROUTES: Viewers
+	 */
+	Route::get("discord/viewers", "DiscordViewerController@index")->name("admin.discord.viewers");
+	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show");
 
 
 
@@ -41,21 +64,9 @@ Route::group(["domain" => env("APP_URL"), "middleware" => "web"], function() {
 	Route::get("twitch/viewers/{twitchID}", "TwitchViewerController@show");
 
 
+	/**
+	 * STREAMER TOOLS
+	 */
+	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
 
-	/**
-	 * DISCORD ROUTES: Events
-	 */
-	Route::get("discord/events", "DiscordEventController@index")->name("admin.discord.events");
-	Route::get("discord/events/{eventID}", "DiscordEventController@show");
-
-	/**
-	 * DISCORD ROUTES: Messages
-	 */
-	Route::get("discord/messages", "DiscordMessageController@index")->name("admin.discord.messages");
-	Route::get("discord/messages/{messageID}", "DiscordMessageController@show");
-	/**
-	 * DISCORD ROUTES: Viewers
-	 */
-	Route::get("discord/viewers", "DiscordViewerController@index")->name("admin.discord.viewers");
-	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show");
 });

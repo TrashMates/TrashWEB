@@ -14,4 +14,5 @@ let mix = require('laravel-mix');
 mix.sass('resources/assets/sass/app.sass', 'public/css')
     .sass('resources/assets/sass/animate.sass', 'public/css')
     .js('resources/assets/js/app.js', 'public/js')
-    .js('resources/assets/js/stats.js', 'public/js');
+    .js('resources/assets/js/stats.js', 'public/js')
+    .js('resources/assets/js/tools/game.js', 'public/js/tools');

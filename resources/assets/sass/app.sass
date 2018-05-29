@@ -25,6 +25,23 @@ a
   text-decoration: none
   color: inherit
 
+input
+  border: none
+  outline: none
+
+  color: white
+  background: transparent
+
+  border-bottom: 2px solid #B63636
+
+::-webkit-scrollbar
+  width: 3px
+  height: 2px
+  border-radius: 50px
+
+::-webkit-scrollbar-thumb
+  background-color: #B63636
+
 // HEADER
 .header
   width: 100vw
@@ -38,6 +55,7 @@ a
     text-align: center
 
     font-family: "Lovelo", "Open Sans", "Roboto", "sans-serif"
+
 
 // NAVBAR
 .navbar
@@ -78,7 +96,6 @@ a
         background: $background
 
 
-
 // LOGIN PAGE
 .login-page
   animation: BlurBorder 3s infinite
@@ -117,7 +134,7 @@ a
     
   .btn
     height: 25px
-    width: 290px
+    width: 250px
     
     border: none
     outline: none
@@ -128,10 +145,12 @@ a
     background: #b63636
 
 
+// ADMIN PAGES
 .admin-index
   .stats
     width: 100vw
     height: 500px
+    max-width: 100%
 
 .admin-table
   h2
@@ -207,3 +226,28 @@ a
       &.active
         background: #b63636
         color: white
+
+
+// TOOLS PAGE
+.tools
+  .input
+    width: 100vw
+    max-width: 100%
+
+    padding: 10px 20px
+    margin: 10px 0
+
+  h5
+    font-weight: bold
+    text-transform: uppercase
+    text-align: center
+
+  .stats
+    padding: 20px 0
+
+    height: calc(100vh - 132px)
+    width: 100vw
+    max-width: 100%
+
+    &.hide
+      display: none

@@ -5,8 +5,8 @@
         <h2>{{ $title }}</h2>
 
         @foreach($Events as $Event)
-            <div class="event toggleable">
-                <div class="infos">
+            <div class="event">
+                <div class="infos toggleable">
                     @if($Event->type == "VIEWER_CREATED" || $Event->type == "MEMBER_JOINED")
                         <div class="type"><i class="fas fa-user-plus"></i></div>
                     @elseif($Event->type == "VIEWER_FOLLOWED")

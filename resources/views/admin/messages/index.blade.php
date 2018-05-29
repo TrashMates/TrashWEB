@@ -5,8 +5,8 @@
         <h2>{{ $title }}</h2>
 
         @foreach($Messages as $Message)
-            <div class="event toggleable">
-                <div class="infos">
+            <div class="event">
+                <div class="infos toggleable">
                     @if($Message->viewer->role == "Follower")
                         <div class="type"><i class="fas fa-heart"></i></div>
                     @elseif($Message->type == "Subscriber")

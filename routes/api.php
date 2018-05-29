@@ -24,6 +24,11 @@ Route::group(["domain" => "api." . env("APP_URL")], function() {
 	Route::get("stats/discord/events", "DiscordEventController@stats");
 	Route::get("stats/discord/messages", "DiscordMessageController@stats");
 	Route::get("stats/discord/viewers", "DiscordViewerController@stats");
+
+	/**
+	 * STREAMER TOOLS
+	 */
+	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
 });
 
 // "middleware" => "api" because we removed it from the RouteServiceProvider

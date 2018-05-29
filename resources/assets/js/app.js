@@ -7,6 +7,6 @@ $(document).ready(() => {
 
     // ADMIN LISTING
     $(".toggleable").on("click", (e) => {
-        $(e.currentTarget).toggleClass("show")
+        $(e.currentTarget).parent().toggleClass("show")
     })
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -41,7 +42,16 @@ class AdminController extends Controller
 		return redirect(route("admin.login"));
 	}
 
+	public function logoff(Request $request)
+	{
+		Session::flush();
+
+		return redirect(route("admin.login"));
+	}
+
 	/**
+	 * GET - Display the Admin Index Page
+	 *
 	 * @return \Illuminate\View\View
 	 */
 	public function index()

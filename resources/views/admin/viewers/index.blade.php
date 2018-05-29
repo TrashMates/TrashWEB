@@ -5,8 +5,8 @@
         <h2>{{ $title }}</h2>
 
         @foreach($Viewers as $Viewer)
-            <div class="event toggleable">
-                <div class="infos">
+            <div class="event">
+                <div class="infos toggleable">
                     @if ($Viewer->role == "Viewer" || $Viewer->role == "@everyone")
                         <div class="type"><i class="fas fa-user"></i></div>
                     @elseif ($Viewer->role == "Follower")

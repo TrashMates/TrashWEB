@@ -167,6 +167,24 @@ a {
   color: inherit;
 }
 
+input {
+  border: none;
+  outline: none;
+  color: white;
+  background: transparent;
+  border-bottom: 2px solid #B63636;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 2px;
+  border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #B63636;
+}
+
 .header {
   width: 100vw;
   max-width: 100%;
@@ -259,7 +277,7 @@ a {
 
 .login-page .btn {
   height: 25px;
-  width: 290px;
+  width: 250px;
   border: none;
   outline: none;
   display: block;
@@ -270,6 +288,7 @@ a {
 .admin-index .stats {
   width: 100vw;
   height: 500px;
+  max-width: 100%;
 }
 
 .admin-table h2 {
@@ -347,5 +366,29 @@ a {
 .admin-table .pagination li.active {
   background: #b63636;
   color: white;
+}
+
+.tools .input {
+  width: 100vw;
+  max-width: 100%;
+  padding: 10px 20px;
+  margin: 10px 0;
+}
+
+.tools h5 {
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.tools .stats {
+  padding: 20px 0;
+  height: calc(100vh - 132px);
+  width: 100vw;
+  max-width: 100%;
+}
+
+.tools .stats.hide {
+  display: none;
 }
 
