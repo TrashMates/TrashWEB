@@ -237,6 +237,20 @@ input {
   background: #121212;
 }
 
+#stream {
+  position: initial !important;
+  height: inherit !important;
+}
+
+.jw-aspect {
+  padding-top: 0 !important;
+}
+
+.max-height {
+  max-height: 100% !important;
+  max-height: 100vh !important;
+}
+
 .login-page {
   -webkit-animation: BlurBorder 3s infinite;
           animation: BlurBorder 3s infinite;

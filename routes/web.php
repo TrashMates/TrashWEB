@@ -21,6 +21,8 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => "web"], fun
 
 });
 
+// "middleware" => "web" because we removed it from the RouteServiceProvider
+// "middleware" => "auth" because we need a Logged In User for theses pages
 Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "auth"]], function() {
 
 	Route::get("/", "AdminController@index")->name("admin.index");
@@ -37,12 +39,12 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "au
 	 */
 	Route::get("discord/messages", "DiscordMessageController@index")->name("admin.discord.messages");
 	Route::get("discord/messages/{messageID}", "DiscordMessageController@show");
+
 	/**
 	 * DISCORD ROUTES: Viewers
 	 */
 	Route::get("discord/viewers", "DiscordViewerController@index")->name("admin.discord.viewers");
 	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show");
-
 
 
 	/**
@@ -68,5 +70,11 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "au
 	 * STREAMER TOOLS
 	 */
 	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
+
+});
+
+Route::group(["domain" => env("APP_URL"), "middleware" => "web"], function() {
+
+	Route::get("/", function() {return view("trashmates.index"); });
 
 });
