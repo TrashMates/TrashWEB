@@ -1,4 +1,4 @@
 // LOADING BAR
-window.onload = function () {
-    document.getElementById("progessbar").remove();
-};
+$(document).ready(function () {
+    $("#progessbar").hide();
+});

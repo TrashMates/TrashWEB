@@ -16,7 +16,6 @@ class TwitchMessageController extends Controller
 	 * Display a listing of the resource.
 	 *
 	 * @param Request $request
-	 *
 	 * @return Collection
 	 */
 	public function index(Request $request)
@@ -39,7 +38,6 @@ class TwitchMessageController extends Controller
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @return TwitchMessage|JsonResponse
 	 */
 	public function store(Request $request)
@@ -72,7 +70,6 @@ class TwitchMessageController extends Controller
 	 *
 	 * @param Request $request
 	 * @param int     $messageID
-	 *
 	 * @return TwitchMessage|JsonResponse
 	 */
 	public function show(Request $request, int $messageID)
@@ -100,7 +97,6 @@ class TwitchMessageController extends Controller
 	 *
 	 * @param  Request $request
 	 * @param int      $messageID
-	 *
 	 * @return TwitchMessage|JsonResponse
 	 */
 	public function update(Request $request, int $messageID)
@@ -124,7 +120,7 @@ class TwitchMessageController extends Controller
 				"userid" => $message->userid,
 				"messageid" => $message->id,
 				"type" => "MESSAGE_MODIFIED",
-				"content" => $message->id . " was modified (before: " . $message->content . ")"
+				"content" => $message->id . " was modified (before: " . $message->content . ")",
 			]);
 
 			$event->save();

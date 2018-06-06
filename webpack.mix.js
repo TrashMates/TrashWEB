@@ -24,4 +24,5 @@ mix.sass('resources/assets/sass/app.sass', 'public/css')
     .babel(['resources/assets/js/stream.js'], 'public/js/stream.js')
 
     .copyDirectory('resources/assets/images', 'public/images')
+    .copyDirectory('resources/assets/js/libs', 'public/js/libs')
     .copyDirectory('resources/assets/mobile', 'public/mobile');

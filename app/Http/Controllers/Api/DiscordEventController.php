@@ -15,7 +15,6 @@ class DiscordEventController extends Controller
 	 * Display a listing of the resource.
 	 *
 	 * @param Request $request
-	 *
 	 * @return Collection
 	 */
 	public function index(Request $request)
@@ -38,7 +37,6 @@ class DiscordEventController extends Controller
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @return DiscordEvent|JsonResponse
 	 */
 	public function store(Request $request)
@@ -71,7 +69,6 @@ class DiscordEventController extends Controller
 	 *
 	 * @param Request $request
 	 * @param int     $eventID
-	 *
 	 * @return DiscordEvent|JsonResponse
 	 */
 	public function show(Request $request, int $eventID)
@@ -99,7 +96,6 @@ class DiscordEventController extends Controller
 	 *
 	 * @param  Request $request
 	 * @param int      $eventID
-	 *
 	 * @return DiscordEvent|JsonResponse
 	 */
 	public function update(Request $request, int $eventID)

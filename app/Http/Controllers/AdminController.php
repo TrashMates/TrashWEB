@@ -21,7 +21,6 @@ class AdminController extends Controller
 	 * POST - Log in the User
 	 *
 	 * @param Request $request
-	 *
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function login(Request $request)

@@ -32,6 +32,7 @@
             @yield('content')
         </div>
 
+        <script defer src="{{ asset("js/libs/jquery-3.3.1.min.js") }}"></script>
         <script defer src="{{ asset("js/loading.js") }}"></script>
         <script defer src="https://content.jwplatform.com/libraries/sQ0EAcjD.js"></script>
         <script defer src="{{ asset("js/stream.js") }}"></script>

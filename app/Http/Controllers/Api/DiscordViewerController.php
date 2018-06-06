@@ -16,7 +16,6 @@ class DiscordViewerController extends Controller
 	 * Display a listing of the resource.
 	 *
 	 * @param Request $request
-	 *
 	 * @return Collection
 	 */
 	public function index(Request $request)
@@ -39,7 +38,6 @@ class DiscordViewerController extends Controller
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @return DiscordViewer|JsonResponse
 	 */
 	public function store(Request $request)
@@ -68,7 +66,7 @@ class DiscordViewerController extends Controller
 		$event = new DiscordEvent([
 			"userid" => $request->input("userid"),
 			"type" => "VIEWER_CREATED",
-			"content" => $request->input("username") . "#" . $request->input("discriminator") . " has joined the server"
+			"content" => $request->input("username") . "#" . $request->input("discriminator") . " has joined the server",
 		]);
 		$event->save();
 
@@ -80,7 +78,6 @@ class DiscordViewerController extends Controller
 	 *
 	 * @param Request $request
 	 * @param int     $viewerID
-	 *
 	 * @return DiscordViewer|JsonResponse
 	 */
 	public function show(Request $request, int $viewerID)
@@ -107,9 +104,7 @@ class DiscordViewerController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @param int      $viewerID
-	 *
 	 * @return DiscordViewer|JsonResponse
 	 */
 	public function update(Request $request, int $viewerID)
@@ -132,7 +127,7 @@ class DiscordViewerController extends Controller
 			$event = new DiscordEvent([
 				"userid" => $viewerID,
 				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . "#" . $viewer->discriminator . " changed his username (became " . $request->input("username") . "#" . $request->input("discriminator") . ")"
+				"content" => $viewer->username . "#" . $viewer->discriminator . " changed his username (became " . $request->input("username") . "#" . $request->input("discriminator") . ")",
 			]);
 			$event->save();
 		}
@@ -141,7 +136,7 @@ class DiscordViewerController extends Controller
 			$event = new DiscordEvent([
 				"userid" => $viewerID,
 				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")"
+				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
 			]);
 			$event->save();
 		}

@@ -15,7 +15,6 @@ class ToolController extends Controller
 	 * @param null    $gameid
 	 * @param null    $cursor
 	 * @param array   $streams
-	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function game(Request $request, $gameid = null, $cursor = null, $streams = [])

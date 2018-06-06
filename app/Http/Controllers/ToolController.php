@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Ixudra\Curl\Facades\Curl;
+use Illuminate\View\View;
 
 class ToolController extends Controller
 {
-    public function game()
-    {
-    	return view("admin.tool.game");
-    }
 
-    public function gameTest()
-    {
+	/**
+	 * Show the 'Currently Streamed Games Stats' Tool
+	 *
+	 * @return View
+	 */
+	public function game(): View
+	{
+		return view("admin.tool.game");
+	}
 
-    }
 }

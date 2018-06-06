@@ -305,9 +305,13 @@ input {
   max-width: 100%;
 }
 
-.admin-table h2 {
+.admin-table h2,
+.admin-table h3,
+.admin-table h4,
+.admin-table h5 {
   font-size: 20px;
   margin: 20px;
+  text-align: center;
 }
 
 .admin-table .event {

@@ -84,6 +84,7 @@ $(document).ready(function () {
 
         setTimeout(function () {
             if (game === $("#game").val() && game !== "" && !searching) {
+                $("#progessbar").show();
                 searching = true;
                 searchGame(game);
             }
@@ -139,6 +140,7 @@ $(document).ready(function () {
 
         $.get("https://api.laravel.local/tools/game?game=" + game, function (streams) {
             $(".stats").show();
+            $("#progessbar").hide();
 
             searching = false;
             var allStreams = {};

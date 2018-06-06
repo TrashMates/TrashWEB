@@ -6,6 +6,7 @@ $(document).ready(() => {
 
         setTimeout(() => {
             if (game === $("#game").val() && game !== "" && !searching) {
+                $("#progessbar").show();
                 searching = true;
                 searchGame(game)
             }
@@ -65,12 +66,13 @@ $(document).ready(() => {
 
         $.get("https://api.laravel.local/tools/game?game=" + game, (streams) => {
             $(".stats").show();
+            $("#progessbar").hide();
 
             searching = false;
             let allStreams = {};
             streams.forEach((stream) => {
 
-                if (! allStreams.hasOwnProperty(stream.language)) {
+                if (!allStreams.hasOwnProperty(stream.language)) {
                     allStreams[stream.language] = [];
                 }
                 allStreams[stream.language].push(stream);

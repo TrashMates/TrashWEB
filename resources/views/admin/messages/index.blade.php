@@ -30,7 +30,7 @@
             </div>
         @endforeach
 
-        <!-- PAGINATION -->
+    <!-- PAGINATION -->
         @include("admin.includes.pagination", ["count" => $count, "page" => $page])
     </div>
 @endsection()

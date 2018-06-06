@@ -16,7 +16,6 @@ class TwitchViewerController extends Controller
 	 * Display a listing of the resource.
 	 *
 	 * @param Request $request
-	 *
 	 * @return Collection
 	 */
 	public function index(Request $request)
@@ -39,7 +38,6 @@ class TwitchViewerController extends Controller
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @return TwitchViewer|JsonResponse
 	 */
 	public function store(Request $request)
@@ -67,7 +65,7 @@ class TwitchViewerController extends Controller
 		$event = new TwitchEvent([
 			"userid" => $request->input("userid"),
 			"type" => "VIEWER_CREATED",
-			"content" => $request->input("username") . " has been created"
+			"content" => $request->input("username") . " has been created",
 		]);
 		$event->save();
 
@@ -79,7 +77,6 @@ class TwitchViewerController extends Controller
 	 *
 	 * @param Request $request
 	 * @param int     $viewerID
-	 *
 	 * @return TwitchViewer|JsonResponse
 	 */
 	public function show(Request $request, int $viewerID)
@@ -106,9 +103,7 @@ class TwitchViewerController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @param int      $viewerID
-	 *
 	 * @return TwitchViewer|JsonResponse
 	 */
 	public function update(Request $request, int $viewerID)
@@ -131,7 +126,7 @@ class TwitchViewerController extends Controller
 			$event = new TwitchEvent([
 				"userid" => $viewerID,
 				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed his username (became " . $request->input("username") . ")"
+				"content" => $viewer->username . " changed his username (became " . $request->input("username") . ")",
 			]);
 			$event->save();
 		}
@@ -140,7 +135,7 @@ class TwitchViewerController extends Controller
 			$event = new TwitchEvent([
 				"userid" => $viewerID,
 				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")"
+				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
 			]);
 			$event->save();
 		}

@@ -16,7 +16,6 @@ class DiscordMessageController extends Controller
 	 * Display a listing of the resource.
 	 *
 	 * @param Request $request
-	 *
 	 * @return Collection
 	 */
 	public function index(Request $request)
@@ -39,7 +38,6 @@ class DiscordMessageController extends Controller
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  Request $request
-	 *
 	 * @return DiscordMessage|JsonResponse
 	 */
 	public function store(Request $request)
@@ -73,7 +71,6 @@ class DiscordMessageController extends Controller
 	 *
 	 * @param Request $request
 	 * @param int     $messageID
-	 *
 	 * @return DiscordMessage|JsonResponse
 	 */
 	public function show(Request $request, int $messageID)
@@ -101,7 +98,6 @@ class DiscordMessageController extends Controller
 	 *
 	 * @param  Request $request
 	 * @param int      $messageID
-	 *
 	 * @return DiscordMessage|JsonResponse
 	 */
 	public function update(Request $request, int $messageID)
@@ -125,7 +121,7 @@ class DiscordMessageController extends Controller
 				"userid" => $message->userid,
 				"messageid" => $message->id,
 				"type" => "MESSAGE_MODIFIED",
-				"content" => $message->id . " was modified (before: " . $message->content . ")"
+				"content" => $message->id . " was modified (before: " . $message->content . ")",
 			]);
 
 			$event->save();

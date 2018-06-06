@@ -1,15 +1,6 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Support\Facades\Route;
 
 // "middleware" => "web" because we removed it from the RouteServiceProvider
 Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => "web"], function() {
@@ -44,7 +35,7 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "au
 	 * DISCORD ROUTES: Viewers
 	 */
 	Route::get("discord/viewers", "DiscordViewerController@index")->name("admin.discord.viewers");
-	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show");
+	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show")->name("admin.discord.viewer");
 
 
 	/**
@@ -63,7 +54,7 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "au
 	 * TWITCH ROUTES: Viewers
 	 */
 	Route::get("twitch/viewers", "TwitchViewerController@index")->name("admin.twitch.viewers");
-	Route::get("twitch/viewers/{twitchID}", "TwitchViewerController@show");
+	Route::get("twitch/viewers/{twitchID}", "TwitchViewerController@show")->name("admin.twitch.viewer");
 
 
 	/**

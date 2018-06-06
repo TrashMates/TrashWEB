@@ -19,15 +19,20 @@
                         <div class="type"><i class="fas fa-question"></i></div>
                     @endif
                     <div class="username">
-                        {{ $Viewer->username }}
                         @if ($Viewer->discriminator)
-                            {{ "#" . $Viewer->discriminator }}
+                            <a href="{{ route('admin.discord.viewer', $Viewer->id) }}">
+                                {{ $Viewer->username . "#" . $Viewer->discriminator }}
+                            </a>
+                        @else
+                            <a href="{{ route('admin.twitch.viewer', $Viewer->id) }}">
+                                {{ $Viewer->username }}
+                            </a>
                         @endif
                     </div>
                     <div class="date">{{ Carbon\Carbon::parse($Viewer->created_at)->diffForHumans() }}</div>
                 </div>
             </div>
-        @endforeach
+    @endforeach
 
     <!-- PAGINATION -->
     @include("admin.includes.pagination", ["count" => $count, "page" => $page])
