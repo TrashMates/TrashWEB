@@ -43,29 +43,30 @@ class TwitchViewerController extends Controller
 	public function store(Request $request)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("username")) || empty($request->input("role"))) {
+		if (empty($request->input("id")) || empty($request->input("username")) || empty($request->input("role"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
 		// INVALID REQUEST - VIEWER ALREADY EXISTS
-		if (TwitchViewer::find($request->input("userid"))) {
+		if (TwitchViewer::find($request->input("id"))) {
 			return response(["error" => "403 - A Twitch Viewer is already registered with this ID."], 403);
 		}
 
 		// VALID REQUEST - CREATE THE VIEWER
 		$viewer = new TwitchViewer([
-			"id" => $request->input("userid"),
-			"username" => $request->input("username"),
-			"role" => $request->input("role"),
+			"id"         => $request->input("id"),
+			"username"   => $request->input("username"),
+			"role"       => $request->input("role"),
 			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 		$viewer->save();
 
 		// CREATE THE EVENT
 		$event = new TwitchEvent([
-			"userid" => $request->input("userid"),
-			"type" => "VIEWER_CREATED",
-			"content" => $request->input("username") . " has been created",
+			"viewer_id"  => $request->input("id"),
+			"type"       => "VIEWER_CREATED",
+			"content"    => $request->input("username") . " has been created",
+			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 		$event->save();
 
@@ -124,18 +125,18 @@ class TwitchViewerController extends Controller
 		// VALID REQUEST - CREATE EVENTS
 		if ($viewer->username != $request->input("username")) {
 			$event = new TwitchEvent([
-				"userid" => $viewerID,
-				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed his username (became " . $request->input("username") . ")",
+				"viewer_id" => $viewerID,
+				"type"      => "VIEWER_UPDATED",
+				"content"   => $viewer->username . " changed his username (became " . $request->input("username") . ")",
 			]);
 			$event->save();
 		}
 
 		if ($viewer->role != $request->input("role")) {
 			$event = new TwitchEvent([
-				"userid" => $viewerID,
-				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
+				"viewer_id" => $viewerID,
+				"type"      => "VIEWER_UPDATED",
+				"content"   => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
 			]);
 			$event->save();
 		}

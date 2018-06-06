@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class DiscordViewer extends Model
 {
@@ -14,23 +13,24 @@ class DiscordViewer extends Model
 		"discriminator",
 		"role",
 		"created_at",
-		"updated_at"
+		"updated_at",
 	];
 
 	public function messages()
 	{
-		return $this->hasMany(DiscordMessage::class, "userid");
+		return $this->hasMany(DiscordMessage::class);
 	}
 
 	public function events()
 	{
-		return $this->hasMany(DiscordEvent::class, "userid");
+		return $this->hasMany(DiscordEvent::class);
 	}
 
 
 	public static function getStats()
 	{
-		return self::selectRaw("COUNT(*) AS count")->selectRaw("DATE(created_at) AS date")
+		return self::selectRaw("COUNT(*) AS count")
+			->selectRaw("DATE(created_at) AS date")
 			->groupBy("date")
 			->orderBy("date", "ASC");
 	}

@@ -18,6 +18,7 @@
         <meta name="theme-color" content="#B63636">
 
         <!-- TrashMates CSS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
         <link rel="stylesheet" href="{{ asset("css/loading.css") }}">
         <link rel="stylesheet" href="{{ asset("css/app.css") }}">
     </head>

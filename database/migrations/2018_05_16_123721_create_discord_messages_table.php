@@ -15,13 +15,13 @@ class CreateDiscordMessagesTable extends Migration
 	{
 		Schema::create('discord_messages', function(Blueprint $table) {
 			$table->bigInteger("id");
-			$table->bigInteger("userid");
+			$table->bigInteger("viewer_id");
 			$table->string("channel");
 			$table->longText("content");
 			$table->timestamps();
 
 			$table->primary("id");
-			$table->foreign("userid")->references("id")->on("discord_viewers");
+			$table->foreign("viewer_id")->references("id")->on("discord_viewers");
 		});
 	}
 

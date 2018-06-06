@@ -15,12 +15,12 @@ class CreateTwitchMessagesTable extends Migration
 	{
 		Schema::create('twitch_messages', function(Blueprint $table) {
 			$table->increments("id");
-			$table->bigInteger("userid");
+			$table->bigInteger("viewer_id");
 			$table->string("channel");
 			$table->longText("content");
 			$table->timestamps();
 
-			$table->foreign("userid")->references("id")->on("twitch_viewers");
+			$table->foreign("viewer_id")->references("id")->on("twitch_viewers");
 		});
 	}
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\DiscordEvent;
+use App\DiscordViewer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -42,20 +43,22 @@ class DiscordEventController extends Controller
 	public function store(Request $request)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("type")) || empty($request->input("content"))) {
+		if (empty($request->input("viewer_id")) || empty($request->input("type")) || empty($request->input("content"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
-		// INVALID REQUEST - EVENT ALREADY EXISTS
-		if (DiscordEvent::find($request->input("userid"))) {
-			return response(["error" => "403 - A Discord Event is already registered with this ID."], 403);
+		// INVALID REQUEST - VIEWER DOESN'T EXIST
+		if (!DiscordViewer::find($request->input('viewer_id'))) {
+			return response(["error" => "403 - No Discord Viewer is registered with this ID."], 403);
 		}
 
 		// VALID REQUEST - CREATE THE EVENT
 		$event = new DiscordEvent([
-			"userid" => $request->input("userid"),
-			"type" => $request->input("type"),
-			"content" => $request->input("content"),
+			"viewer_id"  => $request->input("viewer_id"),
+			"message_id" => $request->input("message_id") ?? null,
+			"type"       => $request->input("type"),
+			"content"    => $request->input("content"),
+			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 
 		// SAVE THE CREATED EVENT
@@ -89,41 +92,6 @@ class DiscordEventController extends Controller
 
 		// INVALID REQUEST - EVENT DOESN'T EXIST
 		return response(["error" => "404 - The Discord Event you requested does not exist."], 404);
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  Request $request
-	 * @param int      $eventID
-	 * @return DiscordEvent|JsonResponse
-	 */
-	public function update(Request $request, int $eventID)
-	{
-		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("type")) || empty($request->input("content"))) {
-			return response(["error" => "400 - Your request is incomplete."], 400);
-		}
-
-		// SEARCHING FOR THE EVENT
-		$event = DiscordEvent::find($eventID);
-
-		// INVALID REQUEST - EVENT DOESN'T EXIST
-		if (!$event) {
-			return response(["error" => "403 - No Discord Event is registered with this ID."], 403);
-		}
-
-		// VALID REQUEST - CHANGE THE EVENT
-		$event->id = $eventID;
-		$event->userid = $request->input("userid");
-		$event->type = $request->input("type");
-		$event->content = $request->input("content");
-		$event->updated_at = Carbon::now();
-
-		// SAVE THE CHANGED EVENT
-		$event->save();
-
-		return $event;
 	}
 
 	/**

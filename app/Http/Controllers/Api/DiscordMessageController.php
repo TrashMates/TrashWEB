@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\DiscordEvent;
 use App\DiscordMessage;
+use App\DiscordViewer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -43,21 +44,27 @@ class DiscordMessageController extends Controller
 	public function store(Request $request)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("id")) || empty($request->input("userid")) || empty($request->input("channel")) || empty($request->input("content"))) {
+		if (empty($request->input("id")) || empty($request->input("viewer_id")) || empty($request->input("channel")) || empty($request->input("content"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
 		// INVALID REQUEST - MESSAGE ALREADY EXISTS
-		if (DiscordMessage::find($request->input("userid"))) {
+		if (DiscordMessage::find($request->input("id"))) {
 			return response(["error" => "403 - A Discord Message is already registered with this ID."], 403);
+		}
+
+		// INVALID REQUEST - VIEWER DOESN'T EXIST
+		if (!DiscordViewer::find($request->input('viewer_id'))) {
+			return response(["error" => "403 - No Discord Viewer is registered with this ID."], 403);
 		}
 
 		// VALID REQUEST - CREATE THE MESSAGE
 		$message = new DiscordMessage([
-			"id" => $request->input("id"),
-			"userid" => $request->input("userid"),
-			"channel" => $request->input("channel"),
-			"content" => $request->input("content"),
+			"id"         => $request->input("id"),
+			"viewer_id"  => $request->input("viewer_id"),
+			"channel"    => $request->input("channel"),
+			"content"    => $request->input("content"),
+			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 
 		// SAVE THE CREATED MESSAGE
@@ -103,7 +110,7 @@ class DiscordMessageController extends Controller
 	public function update(Request $request, int $messageID)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("channel")) || empty($request->input("content"))) {
+		if (empty($request->input("viewer_id")) || empty($request->input("channel")) || empty($request->input("content"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
@@ -118,10 +125,10 @@ class DiscordMessageController extends Controller
 		// VALID REQUEST - CREATE AN EVENT
 		if ($message->content !== $request->input("content")) {
 			$event = new DiscordEvent([
-				"userid" => $message->userid,
-				"messageid" => $message->id,
-				"type" => "MESSAGE_MODIFIED",
-				"content" => $message->id . " was modified (before: " . $message->content . ")",
+				"viewer_id"  => $message->viewer_id,
+				"message_id" => $message->id,
+				"type"       => "MESSAGE_MODIFIED",
+				"content"    => $message->id . " was modified (before: " . $message->content . ")",
 			]);
 
 			$event->save();
@@ -129,7 +136,7 @@ class DiscordMessageController extends Controller
 
 		// CHANGE THE MESSAGE
 		$message->id = $messageID;
-		$message->userid = $request->input("userid");
+		$message->viewer_id = $request->input("viewer_id");
 		$message->channel = $request->input("channel");
 		$message->content = $request->input("content");
 		$message->updated_at = Carbon::now();

@@ -64,7 +64,7 @@ $(document).ready(() => {
         viewers_chart.data.datasets[0].backgroundColor = [];
         viewers_chart.data.labels = [];
 
-        $.get("https://api.laravel.local/tools/game?game=" + game, (streams) => {
+        $.get("https://api.trashmates.fr/tools/game?game=" + game, (streams) => {
             $(".stats").show();
             $("#progessbar").hide();
 

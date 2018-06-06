@@ -43,20 +43,16 @@ class TwitchMessageController extends Controller
 	public function store(Request $request)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("channel")) || empty($request->input("content"))) {
+		if (empty($request->input("viewer_id")) || empty($request->input("channel")) || empty($request->input("content"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
-		}
-
-		// INVALID REQUEST - MESSAGE ALREADY EXISTS
-		if (TwitchMessage::find($request->input("userid"))) {
-			return response(["error" => "403 - A Twitch Message is already registered with this ID."], 403);
 		}
 
 		// VALID REQUEST - CREATE THE MESSAGE
 		$message = new TwitchMessage([
-			"userid" => $request->input("userid"),
-			"channel" => $request->input("channel"),
-			"content" => $request->input("content"),
+			"viewer_id"  => $request->input("viewer_id"),
+			"channel"    => $request->input("channel"),
+			"content"    => $request->input("content"),
+			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 
 		// SAVE THE CREATED MESSAGE
@@ -102,7 +98,7 @@ class TwitchMessageController extends Controller
 	public function update(Request $request, int $messageID)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("channel")) || empty($request->input("content"))) {
+		if (empty($request->input("viewer_id")) || empty($request->input("channel")) || empty($request->input("content"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
@@ -117,10 +113,10 @@ class TwitchMessageController extends Controller
 		// VALID REQUEST - CREATE AN EVENT
 		if ($message->content !== $request->input("content")) {
 			$event = new TwitchEvent([
-				"userid" => $message->userid,
+				"viewer_id" => $message->viewer_id,
 				"messageid" => $message->id,
-				"type" => "MESSAGE_MODIFIED",
-				"content" => $message->id . " was modified (before: " . $message->content . ")",
+				"type"      => "MESSAGE_MODIFIED",
+				"content"   => $message->id . " was modified (before: " . $message->content . ")",
 			]);
 
 			$event->save();
@@ -128,7 +124,7 @@ class TwitchMessageController extends Controller
 
 		// CHANGE THE MESSAGE
 		$message->id = $messageID;
-		$message->userid = $request->input("userid");
+		$message->viewer_id = $request->input("viewer_id");
 		$message->channel = $request->input("channel");
 		$message->content = $request->input("content");
 		$message->updated_at = Carbon::now();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
@@ -26,14 +27,9 @@ class AdminController extends Controller
 	public function login(Request $request)
 	{
 		$username = $request->input("username");
-		$password = hash("sha256", $username . "-" . $request->input("password"));
 
-		$User = User::select(["id", "username"])
-			->where("username", "=", $username)
-			->where("password", "=", $password)
-			->first();
-
-		if ($User) {
+		$User = User::where("username", "=", $username)->first();
+		if ($User && Hash::check($request->input('password'), $User->password)) {
 			Session::put("User", $User);
 			return redirect(route("admin.index"));
 		}

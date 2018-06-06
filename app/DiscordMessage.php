@@ -3,34 +3,34 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class DiscordMessage extends Model
 {
 	public $incrementing = false;
 	protected $fillable = [
 		"id",
-		"userid",
+		"viewer_id",
 		"channel",
 		"content",
 		"created_at",
-		"updated_at"
+		"updated_at",
 	];
 
 	public function viewer()
 	{
-		return $this->BelongsTo(DiscordViewer::class, "userid");
+		return $this->BelongsTo(DiscordViewer::class);
 	}
 
 	public function events()
 	{
-		return $this->hasMany(DiscordEvent::class, "messageid");
+		return $this->hasMany(DiscordEvent::class);
 	}
 
 
 	public static function getStats()
 	{
-		return self::selectRaw("COUNT(*) AS count")->selectRaw("DATE(created_at) AS date")
+		return self::selectRaw("COUNT(*) AS count")
+			->selectRaw("DATE(created_at) AS date")
 			->groupBy("date")
 			->orderBy("date", "ASC");
 	}

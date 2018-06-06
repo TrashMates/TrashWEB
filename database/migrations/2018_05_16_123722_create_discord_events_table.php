@@ -15,14 +15,14 @@ class CreateDiscordEventsTable extends Migration
 	{
 		Schema::create('discord_events', function(Blueprint $table) {
 			$table->increments("id");
-			$table->bigInteger("userid");
-			$table->bigInteger("messageid")->nullable();
+			$table->bigInteger("viewer_id");
+			$table->bigInteger("message_id")->nullable();
 			$table->string("type");
 			$table->string("content");
 			$table->timestamps();
 
-			$table->foreign("userid")->references("id")->on("discord_viewers");
-			$table->foreign("messageid")->references("id")->on("discord_messages");
+			$table->foreign("viewer_id")->references("id")->on("discord_viewers");
+			$table->foreign("message_id")->references("id")->on("discord_messages");
 		});
 	}
 

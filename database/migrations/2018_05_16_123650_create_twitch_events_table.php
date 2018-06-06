@@ -15,14 +15,14 @@ class CreateTwitchEventsTable extends Migration
 	{
 		Schema::create('twitch_events', function(Blueprint $table) {
 			$table->increments("id");
-			$table->bigInteger("userid");
-			$table->integer("messageid")->unsigned()->nullable();
+			$table->bigInteger("viewer_id");
+			$table->integer("message_id")->unsigned()->nullable();
 			$table->string("type");
 			$table->string("content");
 			$table->timestamps();
 
-			$table->foreign("userid")->references("id")->on("twitch_viewers");
-			$table->foreign("messageid")->references("id")->on("twitch_messages");
+			$table->foreign("viewer_id")->references("id")->on("twitch_viewers");
+			$table->foreign("message_id")->references("id")->on("twitch_messages");
 		});
 	}
 

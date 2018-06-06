@@ -40,7 +40,6 @@ Route::group(["domain" => "api." . env("APP_URL"), "middleware" => "api"], funct
 	Route::get("twitch/events", "TwitchEventController@index");
 	Route::get("twitch/events/{eventID}", "TwitchEventController@show");
 	Route::post("twitch/events", "TwitchEventController@store");
-	Route::patch("twitch/events/{eventID}", "TwitchEventController@update");
 
 	/**
 	 * TWITCH ROUTES: Messages
@@ -66,7 +65,6 @@ Route::group(["domain" => "api." . env("APP_URL"), "middleware" => "api"], funct
 	Route::get("discord/events", "DiscordEventController@index");
 	Route::get("discord/events/{eventID}", "DiscordEventController@show");
 	Route::post("discord/events", "DiscordEventController@store");
-	Route::patch("discord/events/{eventID}", "DiscordEventController@update");
 
 	/**
 	 * DISCORD ROUTES: Messages

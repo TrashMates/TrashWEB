@@ -43,30 +43,31 @@ class DiscordViewerController extends Controller
 	public function store(Request $request)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
-		if (empty($request->input("userid")) || empty($request->input("username")) || empty($request->input("discriminator")) || empty($request->input("role"))) {
+		if (empty($request->input("id")) || empty($request->input("username")) || empty($request->input("discriminator")) || empty($request->input("role"))) {
 			return response(["error" => "400 - Your request is incomplete."], 400);
 		}
 
 		// INVALID REQUEST - VIEWER ALREADY EXISTS
-		if (DiscordViewer::find($request->input("userid"))) {
+		if (DiscordViewer::find($request->input("id"))) {
 			return response(["error" => "403 - A Discord Viewer is already registered with this ID."], 403);
 		}
 
 		// VALID REQUEST - CREATE THE VIEWER
 		$viewer = new DiscordViewer([
-			"id" => $request->input("userid"),
-			"username" => $request->input("username"),
+			"id"            => $request->input("id"),
+			"username"      => $request->input("username"),
 			"discriminator" => $request->input("discriminator"),
-			"role" => $request->input("role"),
-			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
+			"role"          => $request->input("role"),
+			"created_at"    => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 		$viewer->save();
 
 		// CREATE THE EVENT
 		$event = new DiscordEvent([
-			"userid" => $request->input("userid"),
-			"type" => "VIEWER_CREATED",
-			"content" => $request->input("username") . "#" . $request->input("discriminator") . " has joined the server",
+			"viewer_id"  => $request->input("id"),
+			"type"       => "VIEWER_CREATED",
+			"content"    => $request->input("username") . "#" . $request->input("discriminator") . " has joined the server",
+			"created_at" => Carbon::parse($request->input("created_at")) ?? Carbon::now(),
 		]);
 		$event->save();
 
@@ -125,18 +126,18 @@ class DiscordViewerController extends Controller
 		// VALID REQUEST - CREATE EVENTS
 		if ($viewer->username != $request->input("username") || $viewer->discriminator != $request->input("discriminator")) {
 			$event = new DiscordEvent([
-				"userid" => $viewerID,
-				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . "#" . $viewer->discriminator . " changed his username (became " . $request->input("username") . "#" . $request->input("discriminator") . ")",
+				"viewer_id" => $viewerID,
+				"type"      => "VIEWER_UPDATED",
+				"content"   => $viewer->username . "#" . $viewer->discriminator . " changed his username (became " . $request->input("username") . "#" . $request->input("discriminator") . ")",
 			]);
 			$event->save();
 		}
 
 		if ($viewer->role != $request->input("role")) {
 			$event = new DiscordEvent([
-				"userid" => $viewerID,
-				"type" => "VIEWER_UPDATED",
-				"content" => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
+				"viewer_id" => $viewerID,
+				"type"      => "VIEWER_UPDATED",
+				"content"   => $viewer->username . " changed role (from " . $viewer->role . " to " . $request->input("role") . ")",
 			]);
 			$event->save();
 		}
