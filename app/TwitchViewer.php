@@ -17,12 +17,12 @@ class TwitchViewer extends Model
 
 	public function messages()
 	{
-		return $this->hasMany(TwitchMessage::class);
+		return $this->hasMany(TwitchMessage::class, 'viewer_id');
 	}
 
 	public function events()
 	{
-		return $this->hasMany(TwitchEvent::class);
+		return $this->hasMany(TwitchEvent::class, 'viewer_id');
 	}
 
 	public static function getStats()

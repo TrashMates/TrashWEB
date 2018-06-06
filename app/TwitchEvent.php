@@ -18,7 +18,7 @@ class TwitchEvent extends Model
 
 	public function viewer()
 	{
-		return $this->BelongsTo(TwitchViewer::class);
+		return $this->BelongsTo(TwitchViewer::class, 'viewer_id');
 	}
 
 

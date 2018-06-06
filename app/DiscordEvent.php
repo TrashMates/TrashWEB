@@ -18,7 +18,7 @@ class DiscordEvent extends Model
 
 	public function viewer()
 	{
-		return $this->BelongsTo(DiscordViewer::class);
+		return $this->BelongsTo(DiscordViewer::class, 'viewer_id');
 	}
 
 

@@ -18,12 +18,12 @@ class DiscordMessage extends Model
 
 	public function viewer()
 	{
-		return $this->BelongsTo(DiscordViewer::class);
+		return $this->BelongsTo(DiscordViewer::class, 'viewer_id');
 	}
 
 	public function events()
 	{
-		return $this->hasMany(DiscordEvent::class);
+		return $this->hasMany(DiscordEvent::class, 'viewer_id');
 	}
 
 
