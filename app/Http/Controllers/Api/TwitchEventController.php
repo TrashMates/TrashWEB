@@ -67,7 +67,7 @@ class TwitchEventController extends Controller
 	 * @param int     $eventID
 	 * @return TwitchEvent|JsonResponse
 	 */
-	public function show(Request $request, int $eventID)
+	public function show(Request $request, $eventID)
 	{
 		$join = $request->header("join") ? true : $request->has("join") ?? false;
 

@@ -68,7 +68,7 @@ class TwitchMessageController extends Controller
 	 * @param int     $messageID
 	 * @return TwitchMessage|JsonResponse
 	 */
-	public function show(Request $request, int $messageID)
+	public function show(Request $request, $messageID)
 	{
 		$join = $request->header("join") ? true : $request->has("join") ?? false;
 
@@ -95,7 +95,7 @@ class TwitchMessageController extends Controller
 	 * @param int      $messageID
 	 * @return TwitchMessage|JsonResponse
 	 */
-	public function update(Request $request, int $messageID)
+	public function update(Request $request, $messageID)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
 		if (empty($request->input("viewer_id")) || empty($request->input("channel")) || empty($request->input("content"))) {

@@ -35,7 +35,7 @@ class TwitchViewerController extends Controller
 	 * @param int     $viewerID
 	 * @return TwitchViewer|JsonResponse
 	 */
-	public function show(Request $request, int $viewerID)
+	public function show(Request $request, $viewerID)
 	{
 		$Viewer = TwitchViewer::with(['events', 'messages'])->findOrFail($viewerID);
 		$title = "Twitch Viewer - " . $Viewer->username;

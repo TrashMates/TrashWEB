@@ -35,7 +35,7 @@ class DiscordViewerController extends Controller
 	 * @param int $viewerID
 	 * @return DiscordViewer|JsonResponse
 	 */
-	public function show(int $viewerID)
+	public function show($viewerID)
 	{
 		$Viewer = DiscordViewer::with(['events', 'messages'])->findOrFail($viewerID);
 		$title = "Discord Viewer - " . $Viewer->username . "#" . $Viewer->discriminator;

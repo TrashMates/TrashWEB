@@ -80,7 +80,7 @@ class TwitchViewerController extends Controller
 	 * @param int     $viewerID
 	 * @return TwitchViewer|JsonResponse
 	 */
-	public function show(Request $request, int $viewerID)
+	public function show(Request $request, $viewerID)
 	{
 		$join = $request->header("join") ? true : $request->has("join") ?? false;
 
@@ -107,7 +107,7 @@ class TwitchViewerController extends Controller
 	 * @param int      $viewerID
 	 * @return TwitchViewer|JsonResponse
 	 */
-	public function update(Request $request, int $viewerID)
+	public function update(Request $request, $viewerID)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
 		if (empty($request->input("username")) || empty($request->input("role"))) {

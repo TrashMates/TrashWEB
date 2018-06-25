@@ -81,7 +81,7 @@ class DiscordViewerController extends Controller
 	 * @param int     $viewerID
 	 * @return DiscordViewer|JsonResponse
 	 */
-	public function show(Request $request, int $viewerID)
+	public function show(Request $request, $viewerID)
 	{
 		$join = $request->header("join") ? true : $request->has("join") ?? false;
 
@@ -108,7 +108,7 @@ class DiscordViewerController extends Controller
 	 * @param int      $viewerID
 	 * @return DiscordViewer|JsonResponse
 	 */
-	public function update(Request $request, int $viewerID)
+	public function update(Request $request, $viewerID)
 	{
 		// INVALID REQUEST - MISSING INFORMATIONS
 		if (empty($request->input("username")) || empty($request->input("discriminator")) || empty($request->input("role"))) {
