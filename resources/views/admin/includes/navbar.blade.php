@@ -15,6 +15,11 @@
                 <li>Current Streamed Games</li>
             </a>
         </ul>
+        <ul>
+            <a href="{{ route("admin.tool.stalker") }}">
+                <li>Followers Stalker</li>
+            </a>
+        </ul>
     </div>
 
     <div class="menu">

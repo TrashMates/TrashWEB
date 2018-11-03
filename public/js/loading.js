@@ -1,1 +1,4 @@
-$(document).ready(function(){$("#progessbar").hide()});
+// LOADING BAR
+$(document).ready(function () {
+    $("#progessbar").hide();
+});

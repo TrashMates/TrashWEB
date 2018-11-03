@@ -1,4 +1,14 @@
+// TrashMates - Game Toolkit
+// VERSION: V3.00
+// AUTHOR: TiCubius
+
 $(document).ready(() => {
+
+    if ($(location).attr(`hash`) === ``) {
+        window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=46vs5ngk9er091esnyovygnumieu5w5&redirect_uri=http://admin.trashweb.devbox/tools/stalker&response_type=token&force_verify=true`
+    }
+
+    let access_token = $(location).attr(`hash`).split(`=`)[1].split(`&`)[0]
 
     let searching = false;
     $("#game").on("keyup", (e) => {

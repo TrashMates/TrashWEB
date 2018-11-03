@@ -61,6 +61,7 @@ Route::group(["domain" => "admin." . env("APP_URL"), "middleware" => ["web", "au
 	 * STREAMER TOOLS
 	 */
 	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
+	Route::get("tools/stalker", "ToolController@stalker")->name("admin.tool.stalker");
 
 });
 

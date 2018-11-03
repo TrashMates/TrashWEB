@@ -29,6 +29,7 @@ Route::group(["domain" => "api." . env("APP_URL")], function() {
 	 * STREAMER TOOLS
 	 */
 	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
+	Route::post("tools/stalk", "ToolController@stalk")->name("admin.tool.stalk");
 });
 
 // "middleware" => "api" because we removed it from the RouteServiceProvider

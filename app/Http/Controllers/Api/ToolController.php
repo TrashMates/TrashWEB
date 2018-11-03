@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Ixudra\Curl\Facades\Curl;
+use Carbon\Carbon;
+use App\StalkUser;
+use App\StalkFollowing;
 
 class ToolController extends Controller
 {
@@ -58,6 +61,44 @@ class ToolController extends Controller
 			}
 		}
 
+	}
+
+	public function stalk(Request $request) {
+		
+		$TwitchFrom = StalkUser::find($request[0]["from_id"]);
+		$AllFollowing = collect();
+
+		foreach($request->all() as $follower) {
+			$TwitchTo   = StalkUser::find($follower["to_id"]);
+
+			if (!$TwitchFrom) {
+				$TwitchFrom = StalkUser::create([
+					"id" => $follower["from_id"],
+					"username" => $follower["from_name"]
+				]);
+			}
+
+			if (!$TwitchTo) {
+				$TwitchTo = StalkUser::create([
+					"id" => $follower["to_id"],
+					"username" => $follower["to_name"]
+				]);
+			}
+
+			$Following = StalkFollowing::where("follow_from_id", $follower["from_id"])->where("follow_to_id", $follower["to_id"])->first();
+
+			if (!$Following) {
+				$Following = StalkFollowing::create([
+					"follow_from_id" => $follower["from_id"],
+					"follow_to_id" => $follower["to_id"],
+					"followed_at" => Carbon::parse($follower["followed_at"])
+				]);
+			}
+
+			$AllFollowing->push($Following);
+		}
+
+		return $AllFollowing;
 	}
 
 }
