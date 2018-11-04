@@ -152,6 +152,10 @@ table {
   transition: .25s;
 }
 
+.hidden {
+  display: none;
+}
+
 html,
 body {
   background: #121212;
@@ -419,5 +423,20 @@ input {
   padding: 20px;
   text-align: center;
   border: 1px solid #b63636;
+}
+
+.tools table {
+  margin: 20px auto;
+  width: 95vw;
+  border: 1px solid #b63636;
+}
+
+.tools table th {
+  padding: 20px;
+}
+
+.tools table tr {
+  text-align: center;
+  line-height: 26px;
 }
 

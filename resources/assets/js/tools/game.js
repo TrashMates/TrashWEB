@@ -2,6 +2,8 @@
 // VERSION: V3.00
 // AUTHOR: TiCubius
 
+streams = []
+
 $(document).ready(() => {
 
     if ($(location).attr(`hash`) === ``) {
@@ -9,120 +11,129 @@ $(document).ready(() => {
     }
 
     let access_token = $(location).attr(`hash`).split(`=`)[1].split(`&`)[0]
+    
 
-    let searching = false;
-    $("#game").on("keyup", (e) => {
-        let game = $("#game").val();
+    $(`#lang`).on("keydown", (e) => {
+        let language = $(`#lang`).val()
+        let streamsSorted = streams
 
-        setTimeout(() => {
-            if (game === $("#game").val() && game !== "" && !searching) {
-                $("#progessbar").show();
-                searching = true;
-                searchGame(game)
+        if (e.keyCode === 13) {
+            if (language !== "all") {
+                streamsSorted = streams.filter((e) => {return e.language === language})
             }
-        }, 1500)
-    });
 
-    let streamers_ctx = document.getElementById("streamers-stats").getContext('2d');
-    let streamers_chart = new Chart(streamers_ctx, {
-        type: 'pie',
-        data: {
-            datasets: [{
-                data: [],
-                backgroundColor: [],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                ],
-                borderWidth: 1,
-            }],
-            labels: []
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
+            let streamsAnalyzed = arrayCount(streamsSorted.map(e => {return e.viewer_count}))
+
+            populateTable(streamsAnalyzed)
         }
-    });
+    })
 
-    let viewers_ctx = document.getElementById("viewers-stats").getContext('2d');
-    let viewers_chart = new Chart(viewers_ctx, {
-        type: 'pie',
-        data: {
-            datasets: [{
-                data: [],
-                backgroundColor: [],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                ],
-                borderWidth: 1,
-            }],
-            labels: []
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
+    $(`#game`).on("keydown", (e) => {
+        streams = []
+        if (e.keyCode === 13) {
+            let game = $(`#game`).val()
+            $(`#lang`).val("")
+
+            $(`#progessbar`).show()
+            getGameInformations([game], access_token).then((games) => {
+                getStreamsForGame(games[0].id, access_token).then((streams) => {
+                    $(`#progessbar`).hide()
+                    table.classList.remove("hidden")
+                    
+                    streamsAnalyzed = arrayCount(streams.map(e => {return e.viewer_count}))
+                    populateTable(streamsAnalyzed)
+
+                }).catch(console.error)
+            }).catch(console.error)
         }
-    });
+    })
+})
 
-    let searchGame = (game) => {
-        // CLEAR STREAMER DATA
-        streamers_chart.data.datasets[0].data = [];
-        streamers_chart.data.datasets[0].backgroundColor = [];
-        streamers_chart.data.labels = [];
+let getGameInformations = (games, access_token) => {
+    let url = `https://api.twitch.tv/helix/games?name=${games.join("&name=")}`
+    console.log(`[*] - Fetching ${url}`)
 
-        // CLEAR VIEWERS DATA
-        viewers_chart.data.datasets[0].data = [];
-        viewers_chart.data.datasets[0].backgroundColor = [];
-        viewers_chart.data.labels = [];
+    return new Promise((resolve, reject) => {
 
-        $.get("https://api.trashmates.fr/tools/game?game=" + game, (streams) => {
-            $(".stats").show();
-            $("#progessbar").hide();
-
-            searching = false;
-            let allStreams = {};
-            streams.forEach((stream) => {
-
-                if (!allStreams.hasOwnProperty(stream.language)) {
-                    allStreams[stream.language] = [];
-                }
-                allStreams[stream.language].push(stream);
-
-            });
-
-            for (let language in allStreams) {
-                let viewers_count = 0;
-                for (let stream in allStreams[language]) {
-                    viewers_count += allStreams[language][stream]['viewer_count'];
-                }
-
-                // GENERATE RANDOM COLOR FOR THE BACKGROUND
-                let color = getRandomColor();
-
-                // HOW MANY STREAMERS FOR THIS LANGUAGE
-                streamers_chart.data.datasets[0].data.push(allStreams[language].length);
-                streamers_chart.data.datasets[0].backgroundColor.push(color);
-                streamers_chart.data.labels.push(language);
-                streamers_chart.update();
-
-                // HOW MANY VIEWER FOR THIS LANGUAGE
-                viewers_chart.data.datasets[0].data.push(viewers_count);
-                viewers_chart.data.datasets[0].backgroundColor.push(color);
-                viewers_chart.data.labels.push(language);
-                viewers_chart.update();
-
+        axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
             }
-        });
+        }).then((response) => {
+            resolve(response.data.data)
+        }).catch(reject)
+
+    })
+}
+
+let getStreamsForGame = (game_id, access_token, pagination) => {
+    if (pagination === undefined) {
+        pagination = ""
     }
 
-    let getRandomColor = () => {
-        let letters = '0123456789ABCDEF';
-        let color = '#';
+    let url = `https://api.twitch.tv/helix/streams?game_id=${game_id}&first=100&after=${pagination}`
+    console.log(`[*] - Fetching ${url}`)
 
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+    return new Promise((resolve, reject) => {
+
+        axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        }).then((response) => {
+            response.data.data.forEach((stream) => {
+                streams.push(stream)
+            })
+
+            pagination = response.data.pagination.cursor
+
+            if (response.data.data.length >= 100) {
+                resolve(getStreamsForGame(game_id, access_token, pagination))
+            }
+            resolve(streams)
+
+        }).catch(reject)
+    })
+}
+
+let populateTable = (streams) => {
+    
+    $("#stats tr").remove()
+    let table = document.querySelector(`#stats`)
+
+    streams.forEach((stream) => {                    
+        let row = table.insertRow()
+
+        row.insertCell().innerHTML = stream.value
+        row.insertCell().innerHTML = stream.count
+        row.insertCell().innerHTML = `${stream.percent}%`
+        row.insertCell().innerHTML = `${stream.above}%`
+        row.insertCell().innerHTML = `${stream.minPosition} - ${stream.maxPosition}`
+    })
+}
+
+arrayCount = (array) => {
+
+    // FIRST: Sort array
+    array = array.sort((a, b) => b-a)
+
+    // THEN: Count
+
+    let countArray = []
+    let above = 0
+    let maxPosition = array.length
+    let minPosition = array.length
+
+    for (let i = 0; i <= array[0]; i++) {
+        let count = array.filter((e) => e === i).length
+        if (count != 0) {
+            let percent = (count / array.length * 100)
+            above += percent
+            minPosition -= count
+            countArray.push({ "value": i, "count": count, "percent": percent.toFixed(2), "above": above.toFixed(2), "maxPosition": maxPosition, "minPosition": minPosition})
+            maxPosition -= count
         }
-
-        return color;
     }
 
-});
+    return countArray
+}
