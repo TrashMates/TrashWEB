@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\TwitchEvent;
-use App\TwitchMessage;
+use App\Models\TwitchEvent;
+use App\Models\TwitchMessage;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;

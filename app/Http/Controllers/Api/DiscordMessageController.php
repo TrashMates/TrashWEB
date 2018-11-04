@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\DiscordEvent;
-use App\DiscordMessage;
-use App\DiscordViewer;
+use App\Models\DiscordEvent;
+use App\Models\DiscordMessage;
+use App\Models\DiscordViewer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;

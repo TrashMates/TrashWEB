@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\DiscordViewer;
+use App\Models\DiscordViewer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

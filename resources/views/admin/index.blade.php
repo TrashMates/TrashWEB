@@ -2,13 +2,13 @@
 
 
 @section("content")
-    <div class="admin-index">
-        <div class="stats">
-            <canvas id="stats" height="300px"></canvas>
-        </div>
-    </div>
+	<div class="admin-index">
+		<div class="stats">
+			<canvas id="stats" height="300px"></canvas>
+		</div>
+	</div>
 @endsection()
 
 @section("scripts")
-    <script defer src="{{ asset("js/stats.js") }}"></script>
+	<script defer src="{{ asset("js/stats.js") }}"></script>
 @endsection()
