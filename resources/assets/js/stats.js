@@ -30,23 +30,23 @@ $(document).ready(() => {
     stats.discord = {};
     stats.twitch = {};
     $.when(
-        $.get("https://api.trashmates.fr/stats/twitch/events", (events) => {
+        $.get(`https://${location.host}/api/stats/twitch/events`, (events) => {
             stats.twitch.events = events
         }),
-        $.get("https://api.trashmates.fr/stats/twitch/messages", (messages) => {
+        $.get(`https://${location.host}/api/stats/twitch/messages`, (messages) => {
             stats.twitch.messages = messages
         }),
-        $.get("https://api.trashmates.fr/stats/twitch/viewers", (viewers) => {
+        $.get(`https://${location.host}/api/stats/twitch/viewers`, (viewers) => {
             stats.twitch.viewers = viewers
         }),
 
-        $.get("https://api.trashmates.fr/stats/discord/events", (events) => {
+        $.get(`https://${location.host}/api/stats/discord/events`, (events) => {
             stats.discord.events = events
         }),
-        $.get("https://api.trashmates.fr/stats/discord/messages", (messages) => {
+        $.get(`https://${location.host}/api/stats/discord/messages`, (messages) => {
             stats.discord.messages = messages
         }),
-        $.get("https://api.trashmates.fr/stats/discord/viewers", (viewers) => {
+        $.get(`https://${location.host}/api/stats/discord/viewers`, (viewers) => {
             stats.discord.viewers = viewers
         }),
     ).then(() => {

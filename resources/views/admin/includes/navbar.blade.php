@@ -8,30 +8,17 @@
             </a>
         </ul>
     </div>
-    <div class="menu">
-        <h5>TOOLS</h5>
-        <ul>
-            <a href="{{ route("admin.tool.game") }}">
-                <li>Current Streamed Games</li>
-            </a>
-        </ul>
-        <ul>
-            <a href="{{ route("admin.tool.stalker") }}">
-                <li>Followers Stalker</li>
-            </a>
-        </ul>
-    </div>
-
+    
     <div class="menu">
         <h5>DISCORD</h5>
         <ul>
-            <a href="{{ route("admin.discord.events") }}">
+            <a href="{{ route("admin.discord.events.index") }}">
                 <li>Events</li>
             </a>
-            <a href="{{ route("admin.discord.messages") }}">
+            <a href="{{ route("admin.discord.messages.index") }}">
                 <li>Messages</li>
             </a>
-            <a href="{{ route("admin.discord.viewers") }}">
+            <a href="{{ route("admin.discord.viewers.index") }}">
                 <li>Viewers</li>
             </a>
         </ul>
@@ -40,13 +27,13 @@
     <div class="menu">
         <h5>Twitch</h5>
         <ul>
-            <a href="{{ route("admin.twitch.events") }}">
+            <a href="{{ route("admin.twitch.events.index") }}">
                 <li>Events</li>
             </a>
-            <a href="{{ route("admin.twitch.messages") }}">
+            <a href="{{ route("admin.twitch.messages.index") }}">
                 <li>Messages</li>
             </a>
-            <a href="{{ route("admin.twitch.viewers") }}">
+            <a href="{{ route("admin.twitch.viewers.index") }}">
                 <li>Viewers</li>
             </a>
         </ul>

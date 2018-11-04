@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,76 +9,36 @@ use Illuminate\Http\Request;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
-
+ */
 
 // We don't want the Middleware here
-Route::group(["domain" => "api." . env("APP_URL")], function() {
+Route::group(["prefix" => "api"], function () {
 
-	Route::get("stats/twitch/events", "TwitchEventController@stats");
-	Route::get("stats/twitch/messages", "TwitchMessageController@stats");
-	Route::get("stats/twitch/viewers", "TwitchViewerController@stats");
+    Route::get("stats/twitch/events", "TwitchEventController@stats");
+    Route::get("stats/twitch/messages", "TwitchMessageController@stats");
+    Route::get("stats/twitch/viewers", "TwitchViewerController@stats");
 
-	Route::get("stats/discord/events", "DiscordEventController@stats");
-	Route::get("stats/discord/messages", "DiscordMessageController@stats");
-	Route::get("stats/discord/viewers", "DiscordViewerController@stats");
+    Route::get("stats/discord/events", "DiscordEventController@stats");
+    Route::get("stats/discord/messages", "DiscordMessageController@stats");
+    Route::get("stats/discord/viewers", "DiscordViewerController@stats");
 
-	/**
-	 * STREAMER TOOLS
-	 */
-	Route::get("tools/game", "ToolController@game")->name("admin.tool.game");
-	Route::post("tools/stalk", "ToolController@stalk")->name("admin.tool.stalk");
 });
 
 // "middleware" => "api" because we removed it from the RouteServiceProvider
-Route::group(["domain" => "api." . env("APP_URL"), "middleware" => "api"], function() {
+Route::group(["prefix" => "/api", "middleware" => "api"], function () {
 
-	/**
-	 * TWITCH ROUTES: Events
-	 */
-	Route::get("twitch/events", "TwitchEventController@index");
-	Route::get("twitch/events/{eventID}", "TwitchEventController@show");
-	Route::post("twitch/events", "TwitchEventController@store");
+	Route::group(["prefix" => "/twitch"], function () {
+		Route::resource("events", "TwitchEventController")->only(["index", "show", "store"]);
+		Route::resource("messages", "TwitchMessageController")->only(["index", "show", "store", "update"]);
+		Route::resource("viewers", "TwitchViewerController")->only(["index", "show", "store", "update"]);
 
-	/**
-	 * TWITCH ROUTES: Messages
-	 */
-	Route::get("twitch/messages", "TwitchMessageController@index");
-	Route::get("twitch/messages/{messageID}", "TwitchMessageController@show");
-	Route::post("twitch/messages", "TwitchMessageController@store");
-	Route::patch("twitch/messages/{messageID}", "TwitchMessageController@update");
+	});
 
-	/**
-	 * TWITCH ROUTES: Viewers
-	 */
-	Route::get("twitch/viewers", "TwitchViewerController@index");
-	Route::get("twitch/viewers/{twitchID}", "TwitchViewerController@show");
-	Route::post("twitch/viewers", "TwitchViewerController@store");
-	Route::patch("twitch/viewers/{twitchID}", "TwitchViewerController@update");
+	Route::group(["prefix" => "/discord"], function () {
+		Route::resource("events", "DiscordEventController")->only(["index", "show", "store"]);
+		Route::resource("messages", "DiscordMessageController")->only(["index", "show", "store", "update"]);
+		Route::resource("viewers", "DiscordViewerController")->only(["index", "show", "store", "update"]);
 
-
-
-	/**
-	 * DISCORD ROUTES: Events
-	 */
-	Route::get("discord/events", "DiscordEventController@index");
-	Route::get("discord/events/{eventID}", "DiscordEventController@show");
-	Route::post("discord/events", "DiscordEventController@store");
-
-	/**
-	 * DISCORD ROUTES: Messages
-	 */
-	Route::get("discord/messages", "DiscordMessageController@index");
-	Route::get("discord/messages/{messageID}", "DiscordMessageController@show");
-	Route::post("discord/messages", "DiscordMessageController@store");
-	Route::patch("discord/messages/{messageID}", "DiscordMessageController@update");
-
-	/**
-	 * DISCORD ROUTES: Viewers
-	 */
-	Route::get("discord/viewers", "DiscordViewerController@index");
-	Route::get("discord/viewers/{discordID}", "DiscordViewerController@show");
-	Route::post("discord/viewers", "DiscordViewerController@store");
-	Route::patch("discord/viewers/{discordID}", "DiscordViewerController@update");
+	});
 
 });

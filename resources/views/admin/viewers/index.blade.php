@@ -20,11 +20,11 @@
                     @endif
                     <div class="username">
                         @if ($Viewer->discriminator)
-                            <a href="{{ route('admin.discord.viewer', $Viewer->id) }}">
+                            <a href="{{ route('admin.discord.viewers.show', $Viewer->id) }}">
                                 {{ $Viewer->username . "#" . $Viewer->discriminator }}
                             </a>
                         @else
-                            <a href="{{ route('admin.twitch.viewer', $Viewer->id) }}">
+                            <a href="{{ route('admin.twitch.viewers.show', $Viewer->id) }}">
                                 {{ $Viewer->username }}
                             </a>
                         @endif

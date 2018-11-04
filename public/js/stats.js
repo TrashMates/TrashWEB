@@ -106,17 +106,17 @@ $(document).ready(function () {
     var stats = {};
     stats.discord = {};
     stats.twitch = {};
-    $.when($.get("https://api.trashmates.fr/stats/twitch/events", function (events) {
+    $.when($.get('https://' + location.host + '/api/stats/twitch/events', function (events) {
         stats.twitch.events = events;
-    }), $.get("https://api.trashmates.fr/stats/twitch/messages", function (messages) {
+    }), $.get('https://' + location.host + '/api/stats/twitch/messages', function (messages) {
         stats.twitch.messages = messages;
-    }), $.get("https://api.trashmates.fr/stats/twitch/viewers", function (viewers) {
+    }), $.get('https://' + location.host + '/api/stats/twitch/viewers', function (viewers) {
         stats.twitch.viewers = viewers;
-    }), $.get("https://api.trashmates.fr/stats/discord/events", function (events) {
+    }), $.get('https://' + location.host + '/api/stats/discord/events', function (events) {
         stats.discord.events = events;
-    }), $.get("https://api.trashmates.fr/stats/discord/messages", function (messages) {
+    }), $.get('https://' + location.host + '/api/stats/discord/messages', function (messages) {
         stats.discord.messages = messages;
-    }), $.get("https://api.trashmates.fr/stats/discord/viewers", function (viewers) {
+    }), $.get('https://' + location.host + '/api/stats/discord/viewers', function (viewers) {
         stats.discord.viewers = viewers;
     })).then(function () {
         for (var type in stats) {
