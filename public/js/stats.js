@@ -78,70 +78,73 @@ module.exports = __webpack_require__(6);
 
 $(document).ready(function () {
 
-    var ctx = document.getElementById("stats").getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: []
-        },
-        options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        //autoSkip:true,
-                    },
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        distribution: 'series',
-                        min: new Date().setMonth(new Date().getMonth() - 1)
-                    }
-                }]
-            }
-        }
-    });
+	var ctx = document.getElementById("stats").getContext('2d');
+	var chart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			datasets: []
+		},
+		options: {
+			maintainAspectRatio: false,
+			responsive: true,
+			scales: {
+				xAxes: [{
+					ticks: {
+						//autoSkip:true,
+					},
+					type: 'time',
+					time: {
+						unit: 'day',
+						distribution: 'series',
+						min: new Date().setMonth(new Date().getMonth() - 1)
+					}
+				}]
+			}
+		}
+	});
 
-    var stats = {};
-    stats.discord = {};
-    stats.twitch = {};
-    $.when($.get('https://' + location.host + '/api/stats/twitch/events', function (events) {
-        stats.twitch.events = events;
-    }), $.get('https://' + location.host + '/api/stats/twitch/messages', function (messages) {
-        stats.twitch.messages = messages;
-    }), $.get('https://' + location.host + '/api/stats/twitch/viewers', function (viewers) {
-        stats.twitch.viewers = viewers;
-    }), $.get('https://' + location.host + '/api/stats/discord/events', function (events) {
-        stats.discord.events = events;
-    }), $.get('https://' + location.host + '/api/stats/discord/messages', function (messages) {
-        stats.discord.messages = messages;
-    }), $.get('https://' + location.host + '/api/stats/discord/viewers', function (viewers) {
-        stats.discord.viewers = viewers;
-    })).then(function () {
-        for (var type in stats) {
-            var _loop = function _loop(key) {
-                var dataset = {
-                    label: "# of " + type.substr(0, 1).toUpperCase() + type.substr(1) + " " + key.substr(0, 1).toUpperCase() + key.substr(1),
-                    data: [],
-                    backgroundColor: ['rgba(255, 99, 132, 0.2)'],
-                    borderColor: ['rgba(255,99,132,1)'],
-                    borderWidth: 1
-                };
+	var stats = {};
+	stats.discord = {};
+	stats.twitch = {};
+	$.when($.get('https://' + location.host + '/api/stats/twitch/events', function (events) {
+		stats.twitch.events = events;
+	}), $.get('https://' + location.host + '/api/stats/twitch/messages', function (messages) {
+		stats.twitch.messages = messages;
+	}), $.get('https://' + location.host + '/api/stats/twitch/viewers', function (viewers) {
+		stats.twitch.viewers = viewers;
+	}), $.get('https://' + location.host + '/api/stats/discord/events', function (events) {
+		stats.discord.events = events;
+	}), $.get('https://' + location.host + '/api/stats/discord/messages', function (messages) {
+		stats.discord.messages = messages;
+	}), $.get('https://' + location.host + '/api/stats/discord/viewers', function (viewers) {
+		stats.discord.viewers = viewers;
+	})).then(function () {
+		for (var type in stats) {
+			var _loop = function _loop(key) {
+				var dataset = {
+					label: "# of " + type.substr(0, 1).toUpperCase() + type.substr(1) + " " + key.substr(0, 1).toUpperCase() + key.substr(1),
+					data: [],
+					backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+					borderColor: ['rgba(255,99,132,1)'],
+					borderWidth: 1
+				};
 
-                stats[type][key].forEach(function (stat) {
-                    dataset.data.push({ x: stat.date, y: stat.count });
-                });
+				stats[type][key].forEach(function (stat) {
+					dataset.data.push({
+						x: stat.date,
+						y: stat.count
+					});
+				});
 
-                chart.data.datasets.push(dataset);
-                chart.update();
-            };
+				chart.data.datasets.push(dataset);
+				chart.update();
+			};
 
-            for (var key in stats[type]) {
-                _loop(key);
-            }
-        }
-    });
+			for (var key in stats[type]) {
+				_loop(key);
+			}
+		}
+	});
 });
 
 /***/ })

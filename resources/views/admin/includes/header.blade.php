@@ -2,6 +2,6 @@
 	<h2>TrashMates</h2>
 </header>
 
-<div class="progress" id="progessbar">
+<div class="progress" id="progressbar">
 	<div class="indeterminate"></div>
 </div>

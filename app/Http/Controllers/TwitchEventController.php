@@ -23,7 +23,11 @@ class TwitchEventController extends Controller
 		$count = TwitchEvent::count();
 		$page = $request->get("page") ?? 1;
 
-		$Events = TwitchEvent::with("viewer")->skip(($page - 1) * 50)->take(50)->orderBy("created_at", "DESC")->get();
+		$Events = TwitchEvent::with("viewer")
+			->skip(($page - 1) * 50)
+			->take(50)
+			->orderBy("created_at", "DESC")
+			->get();
 
 		return view("admin.events.index", compact("Events", "title", "count", "page"));
 	}

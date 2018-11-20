@@ -1,0 +1,44 @@
+* Hostname api.twitch.tv was found in DNS cache
+*   Trying 23.200.157.8...
+* TCP_NODELAY set
+* Connected to api.twitch.tv (23.200.157.8) port 443 (#0)
+* ALPN, offering http/1.1
+* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+* successfully set certificate verify locations:
+*   CAfile: /etc/ssl/certs/ca-certificates.crt
+  CApath: /etc/ssl/certs
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* ALPN, server accepted to use http/1.1
+* Server certificate:
+*  subject: C=US; ST=California; L=San Francisco; O=Twitch Interactive, Inc.; CN=twitch.tv
+*  start date: May  8 00:00:00 2018 GMT
+*  expire date: Aug  7 12:00:00 2019 GMT
+*  subjectAltName: host "api.twitch.tv" matched cert's "*.twitch.tv"
+*  issuer: C=US; O=DigiCert Inc; CN=DigiCert SHA2 Secure Server CA
+*  SSL certificate verify ok.
+> GET /helix/users?id=106466361&id=116111166&id=226105677&id=109326515&id=206030278&id=249076082&id=6633666&id=192862244&id=43577338&id=163585792&id=45038338&id=142498934&id=265654463&id=78064675&id=38429596&id=164517993&id=30116026&id=252812914 HTTP/1.1
+Host: api.twitch.tv
+Accept: */*
+Authorization: Bearer 9ieealnuqrrdecjweneszp51l49lkh
+Content-Type: application/json
+
+< HTTP/1.1 200 OK
+< Content-Type: application/json; charset=utf-8
+< Server: nginx
+< Access-Control-Allow-Origin: *
+< Cache-Control: no-cache, no-store, must-revalidate, private
+< Expires: 0
+< Pragma: no-cache
+< Ratelimit-Limit: 800
+< Ratelimit-Remaining: 799
+< Ratelimit-Reset: 1541711515
+< Twitch-Trace-Id: 7a965b2221e70029556fc863fbb1e5fe
+< X-Ctxlog-Logid: 1-5be4a69a-e95290001445904295c44884
+< Front-End-Https: on
+< Timing-Allow-Origin: https://www.twitch.tv
+< Date: Thu, 08 Nov 2018 21:11:54 GMT
+< Content-Length: 6841
+< Connection: keep-alive
+< 
+* Curl_http_done: called premature == 0
+* Connection #0 to host api.twitch.tv left intact

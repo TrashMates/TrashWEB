@@ -31,6 +31,7 @@
 		</div>
 
 		<script defer src="{{ asset("js/libs/jquery-3.3.1.min.js") }}"></script>
+		<script defer src="{{ asset("js/libs/sorttables.js") }}"></script>
 		<script defer src="{{ asset("js/libs/Chart.bundle.min.js") }}"></script>
 		<script defer src="{{ asset("js/libs/font-awesome.min.js") }}"></script>
 		<script defer src="{{ asset("js/app.js") }}"></script>

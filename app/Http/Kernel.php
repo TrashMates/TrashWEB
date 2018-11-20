@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ApiAuthentification;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\TwitchAPIAuthentification;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -36,6 +37,10 @@ class Kernel extends HttpKernel
 			\Illuminate\View\Middleware\ShareErrorsFromSession::class,
 			\App\Http\Middleware\VerifyCsrfToken::class,
 			\Illuminate\Routing\Middleware\SubstituteBindings::class,
+		],
+
+		'twitch' => [
+			TwitchAPIAuthentification::class
 		],
 
 		'auth' => [

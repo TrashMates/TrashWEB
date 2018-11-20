@@ -3,6 +3,8 @@
     "/css/app.css": "/css/app.css",
     "/css/animate.css": "/css/animate.css",
     "/css/loading.css": "/css/loading.css",
+    "/js/tools/scans.js": "/js/tools/scans.js",
+    "/js/tools/games.js": "/js/tools/games.js",
     "/js/stats.js": "/js/stats.js",
     "/css/bootstrap.css": "/css/bootstrap.css",
     "/js/loading.js": "/js/loading.js",

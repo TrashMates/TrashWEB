@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Ixudra\Curl\Facades\Curl;
 
 class AdminController extends Controller
 {
@@ -42,6 +43,22 @@ class AdminController extends Controller
 		Session::flush();
 
 		return redirect(route("admin.login"));
+	}
+
+	public function oauth(Request $request)
+	{
+		if (Session::has("previous_route")) {
+			if ($request->has("code")) {
+				$twitch = json_decode(Curl::to("https://id.twitch.tv/oauth2/token?client_id=46vs5ngk9er091esnyovygnumieu5w5&client_secret=bk82ym9tntp2dpxupp0gkekjqs0qru&code={$request->get('code')}&grant_type=authorization_code&redirect_uri=https://trashweb.devbox/admin/oauth")
+					->post());
+				Session::put("twitch_code", $twitch->access_token);
+			}
+
+			$route = Session::get("previous_route") ?? "admin.index";
+			Session::remove("previous_route");
+
+			return redirect(route($route));
+		}
 	}
 
 	/**

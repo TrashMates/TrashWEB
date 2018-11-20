@@ -4,7 +4,7 @@
 
 var playerInstance = jwplayer("stream");
 playerInstance.setup({
-        sources: [{
-                file: "https://live.trashmates.fr/live.m3u8"
-        }]
+	sources: [{
+		file: "https://live.trashmates.fr/live.m3u8"
+	}]
 });

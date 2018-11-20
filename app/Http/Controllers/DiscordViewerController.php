@@ -24,7 +24,10 @@ class DiscordViewerController extends Controller
 		$count = DiscordViewer::count();
 		$page = $request->get("page") ?? 1;
 
-		$Viewers = DiscordViewer::skip(($page - 1) * 50)->take(50)->orderBy("created_at", "DESC")->get();
+		$Viewers = DiscordViewer::skip(($page - 1) * 50)
+			->take(50)
+			->orderBy("created_at", "DESC")
+			->get();
 
 		return view("admin.viewers.index", compact("Viewers", "title", "count", "page"));
 	}

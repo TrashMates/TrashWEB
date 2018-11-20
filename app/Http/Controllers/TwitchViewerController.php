@@ -23,7 +23,10 @@ class TwitchViewerController extends Controller
 		$count = TwitchViewer::count();
 		$page = $request->get("page") ?? 1;
 
-		$Viewers = TwitchViewer::skip(($page - 1) * 50)->take(50)->orderBy("created_at", "DESC")->get();
+		$Viewers = TwitchViewer::skip(($page - 1) * 50)
+			->take(50)
+			->orderBy("created_at", "DESC")
+			->get();
 
 		return view("admin.viewers.index", compact("Viewers", "title", "count", "page"));
 	}

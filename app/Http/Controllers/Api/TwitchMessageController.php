@@ -26,7 +26,10 @@ class TwitchMessageController extends Controller
 
 		// QUERYING MESSAGE - Should we get the Viewer as well ?
 		if ($join) {
-			$messages = TwitchMessage::take($limit)->skip($skip)->with("viewer", "events")->get();
+			$messages = TwitchMessage::take($limit)
+				->skip($skip)
+				->with("viewer", "events")
+				->get();
 		} else {
 			$messages = TwitchMessage::take($limit)->skip($skip)->get();
 		}
@@ -141,6 +144,7 @@ class TwitchMessageController extends Controller
 	 */
 	public function stats()
 	{
-		return TwitchMessage::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+		return TwitchMessage::getStats()->where("created_at", ">", Carbon::now()
+			->subDay(31))->get();
 	}
 }

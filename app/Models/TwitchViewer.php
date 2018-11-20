@@ -17,7 +17,10 @@ class TwitchViewer extends Model
 
 	public static function getStats()
 	{
-		return self::selectRaw("COUNT(*) AS count")->selectRaw("DATE(created_at) AS date")->groupBy("date")->orderBy("date", "ASC");
+		return self::selectRaw("COUNT(*) AS count")
+			->selectRaw("DATE(created_at) AS date")
+			->groupBy("date")
+			->orderBy("date", "ASC");
 	}
 
 	public function messages()

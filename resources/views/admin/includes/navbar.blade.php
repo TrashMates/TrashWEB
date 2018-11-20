@@ -12,17 +12,8 @@
 	<div class="menu">
 		<h5>TOOLS</h5>
 		<ul>
-			<a href="{{ "" }}">
-				<li></li>
-			</a>
-		</ul>
-	</div>
-
-	<div class="menu">
-		<h5>TOOLS</h5>
-		<ul>
-			<a href="{{ "" }}">
-				<li></li>
+			<a href="{{ route("admin.tools.games.index") }}">
+				<li>Streamer Helper Initiative Tool</li>
 			</a>
 		</ul>
 	</div>

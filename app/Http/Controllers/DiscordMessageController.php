@@ -24,7 +24,11 @@ class DiscordMessageController extends Controller
 		$count = DiscordMessage::count();
 		$page = $request->get("page") ?? 1;
 
-		$Messages = DiscordMessage::with("viewer")->skip(($page - 1) * 50)->take(50)->orderBy("created_at", "DESC")->get();
+		$Messages = DiscordMessage::with("viewer")
+			->skip(($page - 1) * 50)
+			->take(50)
+			->orderBy("created_at", "DESC")
+			->get();
 
 		return view("admin.messages.index", compact("Messages", "title", "count", "page"));
 	}

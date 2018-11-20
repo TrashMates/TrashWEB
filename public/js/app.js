@@ -79,15 +79,15 @@ module.exports = __webpack_require__(4);
 
 $(document).ready(function () {
 
-    // NAVIGATION POPUP
-    $("#header").on("click", function () {
-        $("#navbar").toggleClass("show");
-    });
+	// NAVIGATION POPUP
+	$("#header").on("click", function () {
+		$("#navbar").toggleClass("show");
+	});
 
-    // ADMIN LISTING
-    $(".toggleable").on("click", function (e) {
-        $(e.currentTarget).parent().toggleClass("show");
-    });
+	// ADMIN LISTING
+	$(".toggleable").on("click", function (e) {
+		$(e.currentTarget).parent().toggleClass("show");
+	});
 });
 
 /***/ }),

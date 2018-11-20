@@ -101,6 +101,7 @@ class DiscordEventController extends Controller
 	 */
 	public function stats()
 	{
-		return DiscordEvent::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+		return DiscordEvent::getStats()->where("created_at", ">", Carbon::now()
+			->subDay(31))->get();
 	}
 }

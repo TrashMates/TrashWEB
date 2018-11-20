@@ -27,7 +27,10 @@ class DiscordMessageController extends Controller
 
 		// QUERYING MESSAGE - Should we get the Viewer as well ?
 		if ($join) {
-			$messages = DiscordMessage::take($limit)->skip($skip)->with("viewer", "events")->get();
+			$messages = DiscordMessage::take($limit)
+				->skip($skip)
+				->with("viewer", "events")
+				->get();
 		} else {
 			$messages = DiscordMessage::take($limit)->skip($skip)->get();
 		}
@@ -153,6 +156,7 @@ class DiscordMessageController extends Controller
 	 */
 	public function stats()
 	{
-		return DiscordMessage::getStats()->where("created_at", ">", Carbon::now()->subDay(31))->get();
+		return DiscordMessage::getStats()->where("created_at", ">", Carbon::now()
+			->subDay(31))->get();
 	}
 }

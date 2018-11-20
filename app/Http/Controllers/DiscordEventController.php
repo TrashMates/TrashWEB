@@ -23,7 +23,11 @@ class DiscordEventController extends Controller
 		$count = DiscordEvent::count();
 		$page = $request->get("page") ?? 1;
 
-		$Events = DiscordEvent::with("viewer")->skip(($page - 1) * 50)->take(50)->orderBy("created_at", "DESC")->get();
+		$Events = DiscordEvent::with("viewer")
+			->skip(($page - 1) * 50)
+			->take(50)
+			->orderBy("created_at", "DESC")
+			->get();
 
 		return view("admin.events.index", compact("Events", "title", "count", "page"));
 	}
