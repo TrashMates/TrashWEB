@@ -84,6 +84,7 @@ $(document).ready(function () {
 
 	// EVENTS
 	$('#gameAdd').on('click', function (e) {
+		$('#progressbar').show();
 		e.preventDefault();
 
 		var game_name = prompt("What game would you like to scan ?");
@@ -91,6 +92,8 @@ $(document).ready(function () {
 			storeGame(game_name).then(function (data) {
 				var game = data.data;
 				addGameToList(game);
+
+				$('#progressbar').hide();
 			}).catch(console.error);
 		}
 	});

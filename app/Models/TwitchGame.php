@@ -16,6 +16,6 @@ class TwitchGame extends Model
 	 */
 	public function stats(): HasMany
 	{
-		return $this->hasMany(TwitchGameStat::class, "game_id");
+		return $this->hasMany(TwitchGameStat::class, "game_id")->orderBy("created_at", "DESC");
 	}
 }

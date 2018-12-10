@@ -32,6 +32,11 @@ Route::group(["prefix" => "/api", "middleware" => "api"], function () {
 		Route::resource("messages", "TwitchMessageController")->only(["index", "show", "store", "update"]);
 		Route::resource("viewers", "TwitchViewerController")->only(["index", "show", "store", "update"]);
 
+		Route::group(["prefix" =>"/games/{game}"], function() {
+			Route::get("/", "TwitchGameController@game");
+			Route::get("/stats", "TwitchGameController@stats");
+			Route::get("/stats/{stat}", "TwitchGameController@stat");
+		});
 	});
 
 	Route::group(["prefix" => "/discord"], function () {

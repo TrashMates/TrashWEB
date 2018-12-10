@@ -300,64 +300,76 @@ input
 			&:hover
 				background: rgb(25, 25, 25)
 
-	.scans_list
-		display: block
 
-		height: 50px
-		margin: 20px
+	&.game
+		.stats
+			display: grid
 
-		width: calc(100% - 40px)
+			grid-template-columns: repeat(3, 1fr)
+			grid-auto-flow: dense
 
-		white-space: nowrap
-		overflow-x: scroll
+			margin: 20px
 
-		.scan
-			display: inline-block
+			background: #212121
 
-			height: 100%
-			padding: 10px 20px
-			background: rgba(25, 25, 25, 25)
-
-	.stats
-		width: calc(100vw - 40px)
-
-		margin: 20px
-
-		h4
-			margin-bottom: 20px
-			text-transform: uppercase
-
-		.stat
-			padding: 20px
-
-		table
-			width: 95vw
-			border: 1px solid #b63636
-			margin: 20px 0
-
-			th
-				padding: 20px 0
-
-				border-bottom: 1px solid #b63636
-
-			td
+			.stat
 				padding: 20px
-
-				&.title
-					border: none
-					text-transform: none
-
-				&.center
-					text-align: center
+				text-align: center
 
 				&:hover
-					background: #b63636AA
+					background: #b6363655
 
-			tr
-				&.total
+		#settings
+			display: none
+
+			#back
+				float: right
+
+				margin: 20px 20px 20px 0
+
+			#languages
+				border: 1px solid #b63636
+
+				padding: 10px 20px
+
+				float: right
+				margin: 20px
+
+				color: white
+				background: transparent
+
+				option
+					color: white
+					background: #151515
+
+					&:hover, &:checked, &:focus
+						background: #b63636 !important
+
+
+		.table
+			margin: 20px
+			border: 1px solid #b63636
+
+			width: calc(100vw - 40px)
+
+			thead
+				th
+					padding: 20px
+
+					&.center
+						text-align: center
+			tbody
+				tr:hover
 					background: #b6363699
-				&:hover
-					background: #B6363677
+
+				td
+					padding: 10px
+
+					&.center
+						text-align: center
+
+					&:hover
+						background: #b63636CC
 
 @media only screen and (min-width: 576px)
 	.games_list

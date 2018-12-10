@@ -6,6 +6,7 @@ $(document).ready(() => {
 
 	// EVENTS
 	$(`#gameAdd`).on(`click`, (e) => {
+		$(`#progressbar`).show()
 		e.preventDefault()
 
 		let game_name = prompt("What game would you like to scan ?")
@@ -13,6 +14,8 @@ $(document).ready(() => {
 			storeGame(game_name).then((data) => {
 				let game = data.data
 				addGameToList(game)
+
+				$(`#progressbar`).hide()
 			}).catch(console.error)
 		}
 	})

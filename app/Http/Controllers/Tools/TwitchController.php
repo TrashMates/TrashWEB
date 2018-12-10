@@ -38,6 +38,10 @@ class TwitchController extends Controller
 	{
 		$oauth = Session::get("twitch_code");
 
+		if ($channelIDs->isEmpty()) {
+			return new Collection();
+		}
+
 		if ($channels === null) {
 			$channels = collect();
 		}

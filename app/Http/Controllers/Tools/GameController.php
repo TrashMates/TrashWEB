@@ -58,7 +58,7 @@ class GameController extends Controller
 	 */
 	public function show(int $id): View
 	{
-		$game = TwitchGame::with(['stats', 'stats.streams', 'stats.streams.channel'])->find($id);
+		$game = TwitchGame::with("stats")->find($id);
 
 		return view("admin.tools.games.show", compact('game'));
 	}
