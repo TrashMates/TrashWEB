@@ -1,4 +1,4 @@
 // LOADING BAR
 $(document).ready(() => {
-	$("#progressbar").hide()
+	$(`#progressbar`).toggle()
 })

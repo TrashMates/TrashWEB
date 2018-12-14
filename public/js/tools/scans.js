@@ -63,213 +63,116 @@
 /******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */
+/******/ ({
+
+/***/ 10:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// SHIT - Streamer Helper Initiative Tool
-// VERSION: V3.10
+// TrashMates - GAME SCAN INITIATIVE
 // AUTHOR: TiCubius
-
+// VERSION: 3.10
 
 var Game = __webpack_require__(11);
+var $UI = __webpack_require__(21);
 
 $(document).ready(function () {
 
-	var gameid = location.href.split("/")[location.href.split("/").length - 1];
-	var game = new Game(gameid);
+	var game_id = location.href.split('/')[location.href.split('/').length - 1];
+	var game = new Game(game_id);
 
-	// BUTTON: Fetch new stats
-	$("#scanNow").click(function (e) {
-		$("#progressbar").show();
-		axios.put(location.href).then(function (response) {
-			$("#progressbar").hide();
+	// EVENT: Stat choosen
+	$('.js-stat').click(function (e) {
 
-			addStreamDate(response.data);
+		// UI Elements
+		$('.js-stat').toggle();
+		$('#progressbar').toggle();
+
+		// Fetching
+		var stat_id = $(e.currentTarget).data('statid');
+		game.fetchStats(stat_id).then(function (stat) {
+
+			stat.fetchStreams().then(function () {
+
+				// UI Element
+				$('#progressbar').toggle();
+				$('#settings').toggle();
+				$('#streams').toggle();
+				$('#words').toggle();
+
+				// Change languages
+				$('#languages').change(function (e) {
+
+					var language = $(e.currentTarget).val();
+					stat.fetchStreams(language).then(function (streams) {
+
+						// Generate Streams data
+						var totalViewers = stat.getTotalViewers(language);
+						var streamsTableHead = [{ content: 'language' }, { content: 'channel' }, { content: 'title (' + streams.length + ' streams)' }, { content: 'viewers (' + totalViewers + ')' }, { content: 'ratio' }];
+						var streamsTableBody = streams.map(function (s) {
+							return [{ class: 'center', content: s.language }, { class: 'center', content: s.channel.username }, { content: s.title }, { class: 'center', content: s.viewers }, { class: 'center', content: (s.viewers / totalViewers * 100).toFixed(3) + '%' }];
+						});
+						$UI.populateTable('streams', streamsTableHead, streamsTableBody);
+
+						// Generate Words data
+						var wordsTableHead = [{ content: 'word' }, { content: 'count' }, { content: 'ratio' }];
+						var wordsTableBody = stat.getTitleStats(language).map(function (s) {
+							return [{ class: 'center', content: s.word }, { class: 'center', content: s.count }, { class: 'center', content: s.ratio + '%' }];
+						});
+						$UI.populateTable('words', wordsTableHead, wordsTableBody);
+					}).catch(console.error);
+				}).trigger('change');
+
+				// Fetch languages
+				var languages = [{ content: 'all' }];
+				languages = languages.concat(stat.getAllStreamsLanguages().map(function (l) {
+					return { content: l };
+				}));
+
+				// Populate languages Select
+				$UI.populateSelect('languages', languages);
+			});
+		}).catch(console.error);
+	});
+
+	// EVENT: Fetch new stats
+	$('#scanNow').click(function (e) {
+		$('#progressbar').toggle();
+		axios.put(location.href).then(function () {
+
+			$('#progressbar').toggle();
+			location.reload(true);
 		});
 	});
 
-	// BUTTON: Click on a stat
-	$(".js-stat").click(function (e) {
-
-		$("#progressbar").show();
-		$("#js-stats").hide();
-
-		var statid = $(e.currentTarget).data("statid");
-		var stats = game.findStat(statid);
-
-		// Fetch all streams
-		stats.fetchStreams().then(function (streams) {
-
-			$("#progressbar").hide();
-			$("#settings").show();
-			$("#streams").show();
-
-			$("#languages").change(function (e) {
-
-				var lang = $(e.currentTarget).val();
-				var filteredStreams = streams;
-
-				if (lang !== "all") {
-					filteredStreams = streams.filter(function (s) {
-						return s.language === lang;
-					});
-				}
-
-				// Generate streams table
-				var streamTableData = filteredStreams.map(function (s) {
-					return [{ class: "center", content: s.language }, { class: "center", content: s.channel.username }, { content: s.title }, { class: "center", content: s.viewers }];
-				});
-				streamTableData.push([{ colspan: 3, class: "center", content: "TOTAL" }, { class: "center", content: stats.getStreamsTotalViewers(lang) }]);
-				populateTable("streams", [{ class: "center", content: "language" }, { content: "channel" }, { content: "title" }, { class: "center", content: "viewers" }], streamTableData);
-			});
-
-			// Generate stream select
-			var streamSelectLanguages = [{ value: "all", content: "All Languages" }];
-			streamSelectLanguages = streamSelectLanguages.concat(stats.getStreamsLanguages().map(function (l) {
-				return { value: l, content: l };
-			}));
-			populateSelect("languages", streamSelectLanguages);
-
-			$("#languages").val("all").trigger("change");
-		});
+	// EVENT: Go back to stats list
+	$('#back').click(function (e) {
+		$('.js-stat').toggle();
+		$('#settings').toggle();
+		$('#streams').toggle();
+		$('#words').toggle();
 	});
-
-	$("#back").click(function (e) {
-		e.preventDefault();
-
-		$("#js-stats").show();
-		$("#streams").hide();
-		$("#settings").hide();
-	});
-
-	var addStreamDate = function addStreamDate(stat) {
-		location.reload(true);
-	};
-
-	/**
-  * Populate a table with the given data
-  * @param HTMLElementID
-  * @param tableHeader
-  * @param tableData
-  */
-	var populateTable = function populateTable(HTMLElementID, tableHeader, tableData) {
-
-		// Remove every child of the HTMLElement
-		var HTMLElement = $("#" + HTMLElementID);
-		HTMLElement.text(" ");
-
-		// OPTIMIZATION: Hide HTMLElement
-		HTMLElement.hide();
-
-		// Generate HTML - Table Header
-		var HTML = "<thead>";
-		tableHeader.forEach(function (column) {
-			var properties = Object.keys(column).filter(function (property) {
-				return property !== "content";
-			});
-
-			HTML += "<th ";
-			properties.forEach(function (p) {
-				HTML += p + "=\"" + column[p] + "\"";
-			});
-			HTML += ">" + column.content + "</th>";
-		});
-		HTML += "</thead>";
-
-		// Generate HTML - Table Body
-		HTML += "<tbody>";
-		tableData.forEach(function (row) {
-			HTML += "<tr>";
-			row.forEach(function (column) {
-				var properties = Object.keys(column).filter(function (property) {
-					return property !== "content";
-				});
-
-				HTML += "<td ";
-				properties.forEach(function (p) {
-					HTML += p + "=\"" + column[p] + "\"";
-				});
-				HTML += ">" + column.content + "</td>";
-			});
-			HTML += "</tr>";
-		});
-		HTML += "</tbody>";
-
-		// Fill the HTMLElement
-		HTMLElement.html(HTML);
-
-		// OPTIMIZATION: Shows the HTMLElement
-		HTMLElement.show();
-	};
-
-	/**
-  * Populate a select with the given data
-  * @param HTMLElementID
-  * @param selectData
-  */
-	var populateSelect = function populateSelect(HTMLElementID, selectData) {
-
-		// Remove every child of the HTMLElement
-		var HTMLElement = $("#" + HTMLElementID);
-		HTMLElement.text(" ");
-
-		// OPTIMIZATION: Hide HTMLElement
-		HTMLElement.hide();
-
-		// Generate HTML - Options
-		var HTML = "";
-		selectData.forEach(function (option) {
-			var properties = Object.keys(option).filter(function (property) {
-				return property !== "content";
-			});
-
-			HTML += "<option ";
-			properties.forEach(function (p) {
-				HTML += p + "=\"" + option[p] + "\"";
-			});
-			HTML += ">" + option.content + "</option>";
-		});
-
-		// Fill the HTMLElemnt
-		HTMLElement.html(HTML);
-
-		// OPTIMIZATION: Show the HTMLElement
-		HTMLElement.show();
-	};
 });
 
 /***/ }),
-/* 11 */
+
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var GameStat = __webpack_require__(12);
+// TrashMates - GameStat
+// AUTHOR: TiCubius
+// VERSION: V3.10
+
+var GameStat = __webpack_require__(20);
 
 var Game = function () {
 
 	/**
-  * Game
-  * @param id
+  * Creates a new instance of Game
+  * @param {Number} id
   */
 	function Game(id) {
 		_classCallCheck(this, Game);
@@ -279,29 +182,31 @@ var Game = function () {
 		this.picture = null;
 
 		this.stats = [];
-		this.headers = { "token": "tFdUNcvfRK0qvfBU" };
 
-		this.fetch();
-		this.fetchStats();
+		this.headers = { "token": "tFdUNcvfRK0qvfBU" };
+		this.fetchGame();
 	}
 
 	/**
-  * Fetches all game information
-  * @returns {Promise<any>}
+  * Fetches all game informations
+  *
+  * @returns {Promise<Object>}
   */
 
 
 	_createClass(Game, [{
-		key: "fetch",
-		value: function fetch() {
+		key: "fetchGame",
+		value: function fetchGame() {
 			var _this = this;
 
 			return new Promise(function (resolve, reject) {
+
 				if (_this.name !== null) {
 					return resolve({ "id": _this.id, "name": _this.name, "picture": _this.picture });
 				}
 
-				axios({ url: "https://" + location.host + "/api/twitch/games/" + _this.id, headers: _this.headers }).then(function (response) {
+				var url = "https://" + location.host + "/api/twitch/games/" + _this.id;
+				axios({ url: url, headers: _this.headers }).then(function (response) {
 					_this.name = response.data.name;
 					_this.picture = response.data.picture;
 
@@ -311,41 +216,48 @@ var Game = function () {
 		}
 
 		/**
+   *
+   * @param {Number?} id
+   */
+
+	}, {
+		key: "getStats",
+		value: function getStats(id) {
+			var stats = this.stats;
+			if (id !== undefined) {
+				stats = stats.find(function (s) {
+					return s.getId() === id;
+				});
+			}
+
+			return stats;
+		}
+
+		/**
    * Fetches all stats for the game
-   * @returns {Promise<any>}
+   *
+   * @param {Number?} id
+   * @returns {Promise<any>|Promise<GameStat>}
    */
 
 	}, {
 		key: "fetchStats",
-		value: function fetchStats() {
+		value: function fetchStats(id) {
 			var _this2 = this;
 
 			return new Promise(function (resolve, reject) {
+
 				if (_this2.stats.length > 0) {
-					return resolve(_this2.stats);
+					return resolve(_this2.getStats(id));
 				}
 
 				axios({ url: "https://" + location.host + "/api/twitch/games/" + _this2.id + "/stats", headers: _this2.headers }).then(function (response) {
-					response.data.stats.forEach(function (retrievedStat) {
-						_this2.stats.push(new GameStat(_this2, retrievedStat.id));
+					response.data.stats.forEach(function (stat) {
+						_this2.stats.push(new GameStat(_this2, stat.id));
 					});
 
-					return resolve(_this2.stats);
+					return resolve(_this2.getStats(id));
 				}).catch(reject);
-			});
-		}
-
-		/**
-   *
-   * @param id
-   * @return {GameStat}
-   */
-
-	}, {
-		key: "findStat",
-		value: function findStat(id) {
-			return this.stats.find(function (s) {
-				return s.id === id;
 			});
 		}
 	}]);
@@ -356,101 +268,173 @@ var Game = function () {
 module.exports = Game;
 
 /***/ }),
-/* 12 */
+
+/***/ 20:
 /***/ (function(module, exports) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// TrashMates - Game Stat
+// AUTHOR: TiCubius
+// VERSION: 3.10
+
 var GameStat = function () {
 
 	/**
-  * Stat
+  * Creates a new intance of GameStat
+  *
   * @param {Game} game
-  * @param {number} id
+  * @param {Number} id
   */
 	function GameStat(game, id) {
 		_classCallCheck(this, GameStat);
 
+		this.game = game;
 		this.id = id;
 
-		this.game = game;
-		this.streams = [];
-
 		this.headers = { "token": "tFdUNcvfRK0qvfBU" };
+		this.streams = [];
 	}
 
 	/**
-  * Fetches all streams for the stat
-  * @returns {Promise<any>}
+  * Returns the ID of the stat
+  *
+  * @returns {Number}
   */
 
 
 	_createClass(GameStat, [{
+		key: "getId",
+		value: function getId() {
+			return this.id;
+		}
+
+		/**
+   * Returns all Streams
+   *
+   * @param {string?} language
+   * @returns {Array<Object>}
+   */
+
+	}, {
+		key: "getStreams",
+		value: function getStreams(language) {
+			var streams = this.streams;
+			if (language !== undefined && language !== "all") {
+				streams = streams.filter(function (s) {
+					return s.language === language;
+				});
+			}
+
+			return streams.sort(function (a, b) {
+				return a.viewers < b.viewers;
+			});
+		}
+
+		/**
+   * Returns the total number of viewer for the given language
+   *
+   * @param {string?} language
+   * @return {Number}
+   */
+
+	}, {
+		key: "getTotalViewers",
+		value: function getTotalViewers(language) {
+			var streams = this.getStreams();
+			if (language !== undefined && language !== "all") {
+				streams = this.getStreams(language);
+			}
+
+			if (streams.length === 0) {
+				return [];
+			}
+
+			return streams.map(function (s) {
+				return s.viewers;
+			}).reduce(function (a, b) {
+				return a + b;
+			});
+		}
+
+		/**
+   * Returns all languages in fetched streams
+   *
+   * @returns {Array<string>}
+   */
+
+	}, {
+		key: "getAllStreamsLanguages",
+		value: function getAllStreamsLanguages() {
+			return Array.from(new Set(this.streams.map(function (s) {
+				return s.language;
+			})));
+		}
+
+		/**
+   * Fetches all stream for specified language
+   *
+   * @param {string?} language
+   * @returns {Promise<Object>}
+   */
+
+	}, {
 		key: "fetchStreams",
-		value: function fetchStreams() {
+		value: function fetchStreams(language) {
 			var _this = this;
 
 			return new Promise(function (resolve, reject) {
 
-				if (_this.streams.length > 0) {
-					return resolve(_this.streams);
+				if (_this.streams.length !== 0) {
+					return resolve(_this.getStreams(language));
 				}
 
-				axios({ url: "https://" + location.host + "/api/twitch/games/" + _this.game.id + "/stats/" + _this.id, headers: _this.headers }).then(function (response) {
+				var url = "https://" + location.host + "/api/twitch/games/" + _this.game.id + "/stats/" + _this.id;
+				axios({ url: url, headers: _this.headers }).then(function (response) {
 					_this.streams = response.data.streams;
 
-					return resolve(_this.streams);
+					return resolve(_this.getStreams(language));
 				}).catch(reject);
 			});
 		}
 
 		/**
-   * Returns the total of viewers for the given lang
-   * @param {string} lang
-   * @returns {int}
+   * Returns the words in all streams' title, along with stats
+   *
+   * @param {string?} language
+   * @returns {Array<Object>}
    */
 
 	}, {
-		key: "getStreamsTotalViewers",
-		value: function getStreamsTotalViewers(lang) {
-			if (this.streams.length === 0) {
-				return 0;
-			}
+		key: "getTitleStats",
+		value: function getTitleStats(language) {
+			var streams = this.getStreams(language);
+			var stats = [];
 
-			if (lang !== "all") {
-				var _streams = this.streams.filter(function (s) {
-					return s.language === lang;
-				}).map(function (s) {
-					return s.viewers;
+			// Flattens the array if words, present in titles, of each streams
+			var words = [].concat.apply([], streams.map(function (s) {
+				return s.title.split(" ");
+			}));
+
+			var totalWords = words.length;
+			words.forEach(function (word) {
+
+				var found = stats.find(function (s) {
+					return s.word.toLowerCase() === word.toLowerCase();
 				});
-				return _streams.length > 0 ? _streams.reduce(function (a, b) {
-					return a + b;
-				}) : 0;
-			}
-
-			var streams = this.streams.map(function (e) {
-				return e.viewers;
+				if (found !== undefined) {
+					found.count += 1;
+					found.ratio = (found.count / totalWords * 100).toFixed(3);
+				} else {
+					stats.push({ word: word, count: 1, ratio: (1 / totalWords * 100).toFixed(3) });
+				}
 			});
-			return streams.length > 0 ? this.streams.map(function (s) {
-				return s.viewers;
-			}).reduce(function (a, b) {
-				return a + b;
-			}) : 0;
-		}
 
-		/**
-   * Returns all streams languages & remove duplicates
-   * @returns {(string | *[])[]}
-   */
-
-	}, {
-		key: "getStreamsLanguages",
-		value: function getStreamsLanguages() {
-			return Array.from(new Set(this.streams.map(function (s) {
-				return s.language;
-			})));
+			return stats.sort(function (a, b) {
+				return a.ratio < b.ratio;
+			});
 		}
 	}]);
 
@@ -459,5 +443,137 @@ var GameStat = function () {
 
 module.exports = GameStat;
 
+/***/ }),
+
+/***/ 21:
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// TrashMates - UI
+// AUTHOR: TiCubius
+// VERSION: 3.10
+
+var UI = function () {
+	function UI() {
+		_classCallCheck(this, UI);
+	}
+
+	_createClass(UI, null, [{
+		key: "populateTable",
+
+
+		/**
+   * Populates a table
+   *
+   * @param {string} HTMLElementID
+   * @param {Array<Object>} tableHeader
+   * @param {Array<Object>} tableData
+   */
+		value: function populateTable(HTMLElementID, tableHeader, tableData) {
+			// Remove every child of the HTMLElement
+			var HTMLElement = $("#" + HTMLElementID);
+			HTMLElement.text(" ");
+
+			// OPTIMIZATION: Hide HTMLElement
+			HTMLElement.hide();
+
+			// Generate HTML - Table Header
+			var HTML = "<thead>";
+			tableHeader.forEach(function (column) {
+				var properties = Object.keys(column).filter(function (property) {
+					return property !== "content";
+				});
+
+				HTML += "<th ";
+				properties.forEach(function (p) {
+					HTML += p + "=\"" + column[p] + "\"";
+				});
+				HTML += ">" + column.content + "</th>";
+			});
+			HTML += "</thead>";
+
+			// Generate HTML - Table Body
+			HTML += "<tbody>";
+			tableData.forEach(function (row) {
+				HTML += "<tr>";
+				row.forEach(function (column) {
+					var properties = Object.keys(column).filter(function (property) {
+						return property !== "content";
+					});
+
+					HTML += "<td ";
+					properties.forEach(function (p) {
+						HTML += p + "=\"" + column[p] + "\"";
+					});
+					HTML += ">" + column.content + "</td>";
+				});
+				HTML += "</tr>";
+			});
+			HTML += "</tbody>";
+
+			// Fill the HTMLElement
+			HTMLElement.html(HTML);
+
+			// OPTIMIZATION: Shows the HTMLElement
+			HTMLElement.show();
+		}
+
+		/**
+   * Populates a select
+   *
+   * @param HTMLElementID
+   * @param selectData
+   */
+
+	}, {
+		key: "populateSelect",
+		value: function populateSelect(HTMLElementID, selectData) {
+
+			// Remove every child of the HTMLElement
+			var HTMLElement = $("#" + HTMLElementID);
+			HTMLElement.text(" ");
+
+			// OPTIMIZATION: Hide HTMLElement
+			HTMLElement.hide();
+
+			// Generate HTML - Options
+			var HTML = "";
+			selectData.forEach(function (option) {
+				var properties = Object.keys(option).filter(function (property) {
+					return property !== "content";
+				});
+
+				HTML += "<option ";
+				properties.forEach(function (p) {
+					HTML += p + "=\"" + option[p] + "\"";
+				});
+				HTML += ">" + option.content + "</option>";
+			});
+
+			// Fill the HTMLElemnt
+			HTMLElement.html(HTML);
+
+			// OPTIMIZATION: Show the HTMLElement
+			HTMLElement.show();
+		}
+	}]);
+
+	return UI;
+}();
+
+module.exports = UI;
+
+/***/ }),
+
+/***/ 9:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(10);
+
+
 /***/ })
-/******/ ]);
+
+/******/ });

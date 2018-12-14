@@ -18,7 +18,7 @@ mix.sass('resources/assets/sass/app.sass', 'public/css')
     .js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/stats.js', 'public/js')
 	.js('resources/assets/js/tools/games.js', 'public/js/tools')
-	.js('resources/assets/js/tools/scans.js', 'public/js/tools')
+	.js('resources/assets/js/tools/scans.js', 'public/js/tools')²
 
     .styles(['resources/assets/sass/bootstrap.css'], 'public/css/bootstrap.css')
     .babel(['resources/assets/js/loading.js'], 'public/js/loading.js')
