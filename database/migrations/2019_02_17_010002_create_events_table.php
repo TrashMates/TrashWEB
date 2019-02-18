@@ -15,15 +15,15 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('from_id');
-            $table->string('to_id');
+            $table->string('from_user_id');
+            $table->string('to_user_id');
             $table->unsignedInteger('event_type_id');
-            $table->string('content');
+            $table->text('content')->nullable();
             $table->timestamps();
 
-            $table->foreign('from_id')->references('id')->on('users');
-            $table->foreign('to_id')->references('id')->on('users');
-            $table->foreign('event_type_id')->references('id')->on('event_types');
+            $table->foreign('from_user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('to_user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('event_type_id')->references('id')->on('event_types')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -18,8 +18,8 @@ class CreateCommunityStreamTable extends Migration
             $table->string('stream_id');
 
             $table->primary(['community_id', 'stream_id']);
-            $table->foreign('community_id')->references('id')->on('communities');
-            $table->foreign('stream_id')->references('id')->on('streams');
+            $table->foreign('community_id')->references('id')->on('communities')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('stream_id')->references('id')->on('streams')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -12,3 +12,4 @@
 */
 
 Route::get("/", "WebController@index")->name("web.index");
+Route::resource("twitch", "");

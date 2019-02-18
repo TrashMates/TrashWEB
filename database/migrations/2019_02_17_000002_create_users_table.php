@@ -15,12 +15,12 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->string('id');
-            $table->string('username');
+            $table->string('broadcaster_type')->nullable();
             $table->string('description')->nullable();
             $table->string('offline_image_url')->nullable();
             $table->string('profile_image_url')->nullable();
-            $table->string('broadcaster_type')->nullable();
             $table->string('type')->nullable();
+            $table->string('username');
             $table->timestamps();
 
             $table->primary('id');

@@ -17,15 +17,15 @@ class CreateStreamsTable extends Migration
             $table->string('id');
             $table->string('game_id');
             $table->string('user_id');
+            $table->string('language');
             $table->string('title');
             $table->string('type');
-            $table->string('language');
             $table->timestamps();
             $table->timestamp('stopped_at')->nullable();
 
             $table->primary('id');
-            $table->foreign('game_id')->references('id')->on('games');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('game_id')->references('id')->on('games')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
