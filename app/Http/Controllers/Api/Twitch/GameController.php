@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Twitch;
 
+use App\Filters\GameFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Twitch\GameRequest;
 use App\Models\Twitch\Game;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -14,14 +16,41 @@ class GameController extends Controller
      * GET - Shows all Twitch games
      * GET - Finds all Twitch games matching a query
      *
-     * @param Request $request &
+     * @param Request     $request &
+     * @param GameFilters $filters
      * @return Collection
      */
-    public function index(Request $request): Collection
+    public function index(Request $request, GameFilters $filters): Collection
     {
-        $games = Game::all();
+        $games = Game::filter($filters)->orderBy("name")->get();
 
         return ($request->has("with") ? $games->load(explode(",", $request->with)) : $games);
+    }
+
+    /**
+     * POST - Fetches a specific game from the Twitch API
+     *
+     * @param Request $request
+     */
+    public function fetch(Request $request)
+    {
+        $request->validate([
+            "name" => "required|max:255",
+        ]);
+
+        $client = new Client();
+        $response = $client->get("https://api.twitch.tv/helix/games?name={$request->name}", [
+            "headers" => ["Client-ID" => env("TWITCH_CLIENT_ID")],
+        ]);
+
+        $foundGames = json_decode($response->getBody()->getContents())->data;
+        foreach ($foundGames as $game) {
+            Game::updateOrCreate([
+                "id"          => $game->id,
+                "box_art_url" => $game->box_art_url,
+                "name"        => $game->name,
+            ]);
+        }
     }
 
     /**

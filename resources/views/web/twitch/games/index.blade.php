@@ -3,38 +3,27 @@
 @section("content")
 
     @component("web._includes.components.title")
-        <h5 class="mb-0">Twitch Users</h5>
+        <h5 class="mb-0">Twitch Games</h5>
     @endcomponent
 
     <div class="card">
-        <div class="card-header">Search a user</div>
+        <div class="card-header">Search a Game</div>
         <div class="card-body">
             <input id="query" class="form-control" type="text" placeholder="Search">
         </div>
 
     </div>
 
-    <table id="table" class="d-none table mt-3">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Broadcaster Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
+    <div id="games" class="d-none row mt-3">
+    </div>
 
     <div id="alert" class="d-none alert alert-warning mt-3">
         <h4 class="alert-heading mt-3">404 - Not Found</h4>
         <hr>
 
         <p>
-            We did not match any user with your query. <br>
-            Would you like to <a id="fetch" href="#">fetch the user</a> instead ?
+            We did not match any game with your query. <br>
+            Would you like to <a id="fetch" href="#">fetch the game</a> instead ?
         </p>
     </div>
 
@@ -71,27 +60,27 @@
                 console.log(`[QUERY] - ${query}`)
 
                 document.querySelector(`#alert`).classList.add(`d-none`)
-                document.querySelector(`#table`).classList.add(`d-none`)
+                document.querySelector(`#games`).classList.add(`d-none`)
 
-                progressBarShow()
-                axios.get(`${url}/twitch/users?id=${query}&username=${query}`).then((response) => {
-                    progressBarHide()
+                axios.get(`${url}/twitch/games?id=${query}&name=${query}`).then((response) => {
 
                     if (response.data.length === 0) {
                         document.querySelector(`#alert`).classList.remove(`d-none`)
                     } else {
-                        document.querySelector(`#table tbody`).innerHTML = ``
-                        response.data.forEach((user) => {
-                            let HTMLUser = document.createElement(`tr`)
-                            HTMLUser.innerHTML += `<td>${user[`id`]}</td>`
-                            HTMLUser.innerHTML += `<td>${user[`username`]}</td>`
-                            HTMLUser.innerHTML += `<td>${user[`broadcaster_type`] || ""}</td>`
-                            HTMLUser.innerHTML += `<td><a href="{{ route("twitch.users.show", "") }}/${user[`id`]}">Profile</a></td>`
+                        document.querySelector(`#games`).innerHTML = ``
+                        response.data.forEach((game) => {
+                            let HTMLGame = document.createElement(`a`)
+                            HTMLGame.href = `{{ route("twitch.games.show", "") }}/${game[`id`]}`
+                            HTMLGame.className = `col-12 col-sm-6 col-md-3 col-lg-2 mb-3`
+                            HTMLGame.innerHTML += `<div class="card">`
+                            HTMLGame.innerHTML += `    <img class="card-img-top" src="${game[`box_art_url`].replace("{width}", "376").replace("{height}", "500")}">`
+                            HTMLGame.innerHTML += `    <div class="card-footer text-center">${game[`name`]}</div>`
+                            HTMLGame.innerHTML += `</div>`
 
-                            document.querySelector(`#table tbody`).append(HTMLUser)
+                            document.querySelector(`#games`).append(HTMLGame)
                         })
 
-                        document.querySelector(`#table`).classList.remove(`d-none`)
+                        document.querySelector(`#games`).classList.remove(`d-none`)
                     }
 
                 }).catch(console.error)
@@ -109,7 +98,7 @@
             e.preventDefault()
             e.stopPropagation()
 
-            axios.post(`${url}/twitch/users/fetch`, {username: latestQuery}).then((response) => {
+            axios.post(`${url}/twitch/games/fetch`, {name: latestQuery}).then((response) => {
 
                 console.log(response.data)
                 $query.dispatchEvent(new Event(`keyup`))

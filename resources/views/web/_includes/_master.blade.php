@@ -6,6 +6,7 @@
 
         <title>TrashWEB</title>
         {{--<link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap.min.css") }}">--}}
+        <link rel="stylesheet" href="{{ asset("assets/css/libraries/egn-progressbar.css") }}">
         <link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap-material-design.min.css") }}">
         <link rel="stylesheet" href="{{ asset("assets/css/app.css") }}">
     </head>
@@ -14,6 +15,8 @@
 
         <div class="container-fluid h-100">
             @include("web._includes.navbar")
+            @include("web._includes.progress")
+
             @yield("content")
         </div>
 

@@ -15,9 +15,14 @@ Route::group(["prefix" => "twitch", "as" => "twitch.", "namespace" => "Api\Twitc
     Route::resource("communities", "CommunityController");
     Route::resource("events", "EventController");
     Route::resource("event-types", "EventTypeController");
+
     Route::resource("games", "GameController");
+    Route::post("games/fetch", "GameController@fetch");
+
     Route::resource("rooms", "RoomController");
+
     Route::resource("streams", "StreamController");
+    Route::post("streams/fetch", "StreamController@fetch");
 
     Route::resource("users", "UserController");
     Route::post("users/fetch", "UserController@fetch");

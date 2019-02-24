@@ -1,0 +1,116 @@
+.egn-progress {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 4px;
+}
+
+.egn-progress__bar {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.egn-progress__bar--background {
+    width: 100%;
+    z-index: 0;
+    left: 0;
+    background-color: #184470;
+}
+
+.egn-progress__bar--one, .egn-progress__bar--two {
+    left: 0;
+    z-index: 1;
+    background-color: #00b3ea;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+}
+
+.egn-progress__bar--one {
+    -webkit-animation-name: indeterminate1;
+    animation-name: indeterminate1;
+}
+
+.egn-progress__bar--two {
+    -webkit-animation-name: indeterminate2;
+    animation-name: indeterminate2;
+}
+
+@-webkit-keyframes indeterminate1 {
+    0% {
+        left: 0%;
+        width: 0%;
+    }
+    50% {
+        left: 25%;
+        width: 75%;
+    }
+    75% {
+        left: 100%;
+        width: 0%;
+    }
+}
+
+@keyframes indeterminate1 {
+    0% {
+        left: 0%;
+        width: 0%;
+    }
+    50% {
+        left: 25%;
+        width: 75%;
+    }
+    75% {
+        left: 100%;
+        width: 0%;
+    }
+}
+
+@-webkit-keyframes indeterminate2 {
+    0%, 50% {
+        left: 0%;
+        width: 0%;
+    }
+    75% {
+        left: 0%;
+        width: 25%;
+    }
+    100% {
+        left: 100%;
+        width: 0%;
+    }
+}
+
+@keyframes indeterminate2 {
+    0%, 50% {
+        left: 0%;
+        width: 0%;
+    }
+    75% {
+        left: 0%;
+        width: 25%;
+    }
+    100% {
+        left: 100%;
+        width: 0%;
+    }
+}
+
+.egn-progress--demo-variation {
+    margin-top: 50px;
+}
+
+.egn-progress--demo-variation .egn-progress__bar--background {
+    background-color: #a3b4c6;
+}
+
+.egn-progress--demo-variation .egn-progress__bar--one,
+.egn-progress--demo-variation .egn-progress__bar--two {
+    background-color: #00b3ea;
+}

@@ -47,7 +47,7 @@ class UserFilters extends QueryFilters
     }
 
     /**
-     * FILTER - Search all users with a specific id
+     * FILTER - Search all users with a matching id
      *
      * @param string|null $query
      * @return Builder|null
@@ -96,7 +96,7 @@ class UserFilters extends QueryFilters
     }
 
     /**
-     * FILTER - Search all users of a specific type
+     * FILTER - Search all users of a matching type
      *
      * @param string|null $query
      * @return Builder|null
@@ -111,7 +111,7 @@ class UserFilters extends QueryFilters
     }
 
     /**
-     * FILTER - Search all users of a specific username
+     * FILTER - Search all users of a matching username
      *
      * @param string|null $query
      * @return Builder|null

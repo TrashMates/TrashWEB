@@ -2,11 +2,14 @@
 
 namespace App\Models\Twitch;
 
+use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
+    use Filterable;
+
     /**
      * The primary key is not an autoincrement
      *

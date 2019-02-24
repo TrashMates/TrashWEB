@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Stream extends Model
 {
     /**
+     * All columns that should be treated as dates
+     *
+     * @var array
+     */
+    public $dates = [
+        "stopped_at"
+    ];
+
+    /**
      * The primary key is not an autoincrement
      *
      * @var bool
