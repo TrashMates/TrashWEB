@@ -9,7 +9,14 @@
                     @yield("navbar")
 
                     <li class="nav-item"><a class="nav-link" href="#">Discord</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Twitch</a></li>
+                    <li class="nav-item dropdown">
+                        <a id="twitchDropdown" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Twitch</a>
+                        <div class="dropdown-menu" aria-labelledby="twitchDropdown">
+                            <a class="dropdown-item" href="{{ route("twitch.games.index") }}">Games</a>
+                            <a class="dropdown-item" href="{{ route("twitch.users.index") }}">Users</a>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="#">Log In</a></li>
                 </ul>
             </div>

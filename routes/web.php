@@ -12,4 +12,9 @@
 */
 
 Route::get("/", "WebController@index")->name("web.index");
-Route::resource("twitch", "");
+
+Route::group(["prefix" => "twitch", "as" => "twitch.", "namespace" => "Twitch"], function () {
+
+    Route::resource("users", "UserController");
+
+});

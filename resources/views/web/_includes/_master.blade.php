@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>TrashWEB</title>
-        <link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap.min.css") }}">
+        {{--<link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap.min.css") }}">--}}
+        <link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap-material-design.min.css") }}">
         <link rel="stylesheet" href="{{ asset("assets/css/app.css") }}">
     </head>
 
@@ -17,6 +18,9 @@
         </div>
 
         <script src="{{ asset("assets/js/libraries/jquery-3.3.1.min.js") }}"></script>
+        <script src="{{ asset("assets/js/libraries/axios.min.js") }}"></script>
+        <script src="{{ asset("assets/js/libraries/moment.min.js") }}"></script>
+        <script src="{{ asset("assets/js/libraries/chart.bundle.min.js") }}"></script>
         <script src="{{ asset("assets/js/libraries/bootstrap.bundle.min.js") }}"></script>
         <script src="{{ asset("assets/js/app.js") }}"></script>
         @yield("scripts")

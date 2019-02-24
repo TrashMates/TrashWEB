@@ -2,11 +2,15 @@
 
 namespace App\Models\Twitch;
 
+use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Model
 {
+    use Filterable;
+
     /**
      * The primary key is not an autoincrement
      *
@@ -29,7 +33,7 @@ class User extends Model
      */
     public function eventsAuthor(): HasMany
     {
-        return $this->hasMany(Event::class, "from_user_id");
+        return $this->hasMany(Event::class, "from_user_id")->orderBy("created_at");
     }
 
     /**
@@ -39,7 +43,12 @@ class User extends Model
      */
     public function eventsReceiver(): HasMany
     {
-        return $this->hasMany(Event::class, "to_user_id");
+        return $this->hasMany(Event::class, "to_user_id")->orderBy("created_at");
+    }
+
+    public function followers(): HasManyThrough
+    {
+        return $this->hasManyThrough(User::class, Event::class, "to_user_id", "id", "id", "from_user_id");
     }
 
     /**
