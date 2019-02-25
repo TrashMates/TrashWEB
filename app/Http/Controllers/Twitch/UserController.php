@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Twitch;
 
 use App\Http\Controllers\Controller;
 use App\Models\Twitch\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 
@@ -29,16 +30,17 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
-        /**
-         * @var Collection $events
-         */
-        $events = $user->eventsReceiver;
+        $followers = $user->eventsReceiver()->whereDate("created_at", ">", Carbon::now()->subMonth(2))->get();
+        $followings = $user->eventsAuthor()->whereDate("created_at", ">", Carbon::now()->subMonth(2))->get();
 
-        $events = $events->mapToGroups(function ($item, $key) {
+        $followers = $followers->mapToGroups(function ($item, $key) {
+            return [$item['created_at']->startOfDay()->jsonSerialize()["date"] => $item];
+        });
+        $followings = $followings->mapToGroups(function ($item, $key) {
             return [$item['created_at']->startOfDay()->jsonSerialize()["date"] => $item];
         });
 
-        return view("web.twitch.users.show", compact("events", "user"));
+        return view("web.twitch.users.show", compact("followers", "followings", "user"));
     }
 
 }

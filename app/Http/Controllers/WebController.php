@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\View\View;
+use TiCubius\TwitchAPI\Facades\Users;
 
 class WebController extends Controller
 {

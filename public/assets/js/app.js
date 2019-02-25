@@ -100,7 +100,7 @@
 /**
  * ProgressBar - Displays the progress bar
  */
-var progressBarShow = function progressBarShow() {
+progressBarShow = function progressBarShow() {
   document.querySelector("#progressbar").classList.remove("d-none");
 };
 /**
@@ -108,7 +108,7 @@ var progressBarShow = function progressBarShow() {
  */
 
 
-var progressBarHide = function progressBarHide() {
+progressBarHide = function progressBarHide() {
   document.querySelector("#progressbar").classList.add("d-none");
 };
 /**

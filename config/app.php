@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        TiCubius\TwitchAPI\TwitchAPIServiceProvider::class,
 
         /*
          * Application Service Providers...

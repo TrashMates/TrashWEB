@@ -4,8 +4,8 @@ namespace App\Models\Twitch;
 
 use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Model
 {
@@ -46,9 +46,28 @@ class User extends Model
         return $this->hasMany(Event::class, "to_user_id")->orderBy("created_at");
     }
 
-    public function followers(): HasManyThrough
+    /**
+     * A user may have many followers
+     *
+     * @return BelongsToMany
+     */
+    public function followers(): BelongsToMany
     {
-        return $this->hasManyThrough(User::class, Event::class, "to_user_id", "id", "id", "from_user_id");
+        $event = EventType::where("name", "twitch/followed")->select(["id"])->first()->id;
+
+        return $this->belongsToMany(User::class, "events", "to_user_id", "from_user_id")->where("event_type_id", $event)->orderBy("created_at");
+    }
+
+    /**
+     * A user may have many followings
+     *
+     * @return BelongsToMany
+     */
+    public function followings(): BelongsToMany
+    {
+        $event = EventType::where("name", "twitch/followed")->select(["id"])->first()->id;
+
+        return $this->belongsToMany(User::class, "events", "from_user_id", "to_user_id")->where("event_type_id", $event)->orderBy("created_at");
     }
 
     /**

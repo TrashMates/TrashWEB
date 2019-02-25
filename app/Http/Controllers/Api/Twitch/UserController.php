@@ -9,46 +9,12 @@ use App\Models\Twitch\Event;
 use App\Models\Twitch\EventType;
 use App\Models\Twitch\User;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use TiCubius\TwitchAPI\Facades\Users;
 
 class UserController extends Controller
 {
-    /**
-     * RECURSIVE - Fetches upto 1000 followers of a Twitch user
-     *
-     * @param string                              $userid
-     * @param \Illuminate\Support\Collection|null $followers
-     * @param string|null                         $pagination
-     * @return \Illuminate\Support\Collection
-     */
-    private function _fetchFollowers(string $userid, \Illuminate\Support\Collection $followers = null, string $pagination = null): \Illuminate\Support\Collection
-    {
-        if ($followers === null) {
-            $followers = collect();
-        }
-
-        $client = new Client();
-        $response = $client->get("https://api.twitch.tv/helix/users/follows?to_id={$userid}&first=100&after={$pagination}", [
-            "headers" => ["Client-ID" => env("TWITCH_CLIENT_ID")],
-        ]);
-
-        $data = json_decode($response->getBody()->getContents());
-        $users = $data->data;
-
-        foreach ($users as $user) {
-            $followers->push($user);
-        }
-
-        if ((count($users) >= 100) && $followers->count() < 1000) {
-            $pagination = $data->pagination->cursor;
-            return $this->_fetchFollowers($userid, $followers, $pagination);
-        }
-
-        return $followers;
-    }
-
     /**
      * GET - Shows all Twitch users
      * GET - Finds all Twitch user matching a query
@@ -69,46 +35,133 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function fetch(Request $request)
+    public function fetchUser(Request $request)
     {
+        $request->validate([
+            "id"       => "nullable|exists:users,id",
+            "username" => "nullable|max:255",
+        ]);
+
+        if ($request->has("id")) {
+            $user = Users::findFromId($request->id);
+        } elseif ($request->has("username")) {
+            $user = Users::findFromUsername($request->username);
+        }
+
+        User::updateOrCreate([
+            "id" => $user->id,
+        ], [
+            "broadcaster_type"  => $user->broadcaster_type ?? null,
+            "description"       => $user->description ?? null,
+            "offline_image_url" => $user->offline_image_url ?? null,
+            "profile_image_url" => $user->profile_image_url ?? null,
+            "type"              => $user->type ?? null,
+            "username"          => $user->display_name ?? $user->login,
+        ]);
+    }
+
+    /**
+     * GET - Fetches all followers of a Twitch User
+     *
+     * @param Request $request
+     */
+    public function fetchFollowers(Request $request)
+    {
+        $request->validate([
+            "id" => "required|exists:users,id",
+        ]);
+
         $eventType = EventType::where("name", "twitch/followed")->firstOrFail();
 
-        $request->validate([
-            "username" => "required|max:255",
-        ]);
+        // Fetch the user's followers
+        $followers = Users::fetchFollowers($request->id);
+        $followers_id = $followers->pluck("from_id");
 
-        $client = new Client();
-        $response = $client->get("https://api.twitch.tv/helix/users?login={$request->username}", [
-            "headers" => ["Client-ID" => env("TWITCH_CLIENT_ID")],
-        ]);
+        $followersInformations = Users::fetchFromId($followers_id->toArray());
 
-        $foundUsers = json_decode($response->getBody()->getContents())->data;
-        foreach ($foundUsers as $user) {
+        // Insert all followers
+        foreach ($followersInformations as $follower) {
             User::updateOrCreate([
-                "id"                => $user->id,
-                "broadcaster_type"  => $user->broadcaster_type,
-                "description"       => $user->description,
-                "offline_image_url" => $user->offline_image_url,
-                "profile_image_url" => $user->profile_image_url,
-                "type"              => $user->type,
-                "username"          => $user->display_name ?? $user->login,
+                "id" => $follower->id,
+            ], [
+                "broadcaster_type"  => $follower->broadcaster_type !== "" ? $follower->broadcaster_type : null,
+                "description"       => $follower->description !== "" ? $follower->description : null,
+                "offline_image_url" => $follower->offline_image_url !== "" ? $follower->offline_image_url : null,
+                "profile_image_url" => $follower->profile_image_url !== "" ? $follower->profile_image_url : null,
+                "type"              => $follower->type !== "" ? $follower->type : null,
+                "username"          => $follower->display_name ?? $follower->login,
+            ]);
+        }
+
+        //  Insert all followers events
+        foreach ($followers as $follower) {
+            // If the account was deleted, the follow link still
+            // exists... somehow...?
+            User::firstOrCreate([
+                "id" => $follower->from_id,
+            ], [
+                "username" => $follower->from_name,
             ]);
 
-            $followers = $this->_fetchFollowers($user->id);
-            foreach ($followers as $follower) {
-                $createdFollower = User::updateOrCreate([
-                    "id"       => $follower->from_id,
-                    "username" => $follower->from_name,
-                ]);
 
+            Event::updateOrCreate([
+                "from_user_id"  => $follower->from_id,
+                "to_user_id"    => $request->id,
+                "event_type_id" => $eventType->id,
+                "created_at"    => Carbon::parse($follower->followed_at)->format("Y-m-d H:i:s"),
+            ]);
+        }
+    }
 
-                Event::updateOrCreate([
-                    "from_user_id"  => $createdFollower->id,
-                    "to_user_id"    => $user->id,
-                    "event_type_id" => $eventType->id,
-                    "created_at"    => Carbon::parse($follower->followed_at)->format("Y-m-d H:i:s"),
-                ]);
-            }
+    /**
+     * GET - Fetches all followings of a Twitch User
+     *
+     * @param Request $request
+     */
+    public function fetchFollowings(Request $request)
+    {
+        $request->validate([
+            "id" => "required|exists:users,id",
+        ]);
+
+        $eventType = EventType::where("name", "twitch/followed")->firstOrFail();
+
+        // Fetch all followings
+        $followings = Users::fetchFollowings($request->id);
+        $followings_id = $followings->pluck("to_id");
+
+        $followingsInformation = Users::fetchFromId($followings_id->toArray());
+
+        // Insert all followings
+        foreach ($followingsInformation as $following) {
+            User::updateOrCreate([
+                "id" => $following->id,
+            ], [
+                "broadcaster_type"  => $following->broadcaster_type !== "" ? $following->broadcaster_type : null,
+                "description"       => $following->description !== "" ? $following->description : null,
+                "offline_image_url" => $following->offline_image_url !== "" ? $following->offline_image_url : null,
+                "profile_image_url" => $following->profile_image_url !== "" ? $following->profile_image_url : null,
+                "type"              => $following->type !== "" ? $following->type : null,
+                "username"          => $following->display_name ?? $following->login,
+            ]);
+        }
+
+        // Insert all followings events
+        foreach ($followings as $following) {
+            // If the account was deleted, the follow link still
+            // exists... somehow...?
+            $user = User::firstOrCreate([
+                "id" => $following->to_id,
+            ], [
+                "username" => $following->to_name,
+            ]);
+
+            Event::updateOrCreate([
+                "from_user_id"  => (string) $request->id,
+                "to_user_id"    => $following->to_id,
+                "event_type_id" => $eventType->id,
+                "created_at"    => Carbon::parse($following->followed_at)->format("Y-m-d H:i:s"),
+            ]);
         }
     }
 

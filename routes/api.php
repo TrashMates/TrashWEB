@@ -25,6 +25,8 @@ Route::group(["prefix" => "twitch", "as" => "twitch.", "namespace" => "Api\Twitc
     Route::post("streams/fetch", "StreamController@fetch");
 
     Route::resource("users", "UserController");
-    Route::post("users/fetch", "UserController@fetch");
+    Route::post("users/fetch-user", "UserController@fetchUser");
+    Route::post("users/fetch-followers", "UserController@fetchFollowers");
+    Route::post("users/fetch-followings", "UserController@fetchFollowings");
 });
 

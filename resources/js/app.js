@@ -2,18 +2,17 @@
 // VERSION: 3.50
 // AUTHOR: TiCubius
 
-
 /**
  * ProgressBar - Displays the progress bar
  */
-const progressBarShow = () => {
+progressBarShow = () => {
     document.querySelector(`#progressbar`).classList.remove(`d-none`)
 }
 
 /**
  * ProgressBar - Hides the progress bar
  */
-const progressBarHide = () => {
+progressBarHide = () => {
     document.querySelector(`#progressbar`).classList.add(`d-none`)
 }
 
@@ -21,7 +20,9 @@ const progressBarHide = () => {
  * When everything is loaded
  */
 window.onload = function() {
+
     progressBarHide()
+
 }
 
 axios.interceptors.request.use((config) => {

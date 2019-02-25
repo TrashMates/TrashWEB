@@ -1,0 +1,11 @@
+{
+    "name": "ticubius/twitchapi",
+    "description": "Twitch API Wrapper for Laravel 5.7",
+    "authors": [
+        {
+            "name": "TiCubius",
+            "email": "ktartiere@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

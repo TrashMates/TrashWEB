@@ -14,19 +14,24 @@
 
     </div>
 
-    <table id="table" class="d-none table mt-3">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Broadcaster Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="card my-3">
+        <div class="card-header">Users</div>
+        <div class="card-body">
+            <table id="table" class="d-none table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Broadcaster Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div id="alert" class="d-none alert alert-warning mt-3">
         <h4 class="alert-heading mt-3">404 - Not Found</h4>
@@ -73,9 +78,7 @@
                 document.querySelector(`#alert`).classList.add(`d-none`)
                 document.querySelector(`#table`).classList.add(`d-none`)
 
-                progressBarShow()
                 axios.get(`${url}/twitch/users?id=${query}&username=${query}`).then((response) => {
-                    progressBarHide()
 
                     if (response.data.length === 0) {
                         document.querySelector(`#alert`).classList.remove(`d-none`)
@@ -109,7 +112,7 @@
             e.preventDefault()
             e.stopPropagation()
 
-            axios.post(`${url}/twitch/users/fetch`, {username: latestQuery}).then((response) => {
+            axios.post(`${url}/twitch/users/fetch-user`, {username: latestQuery}).then((response) => {
 
                 console.log(response.data)
                 $query.dispatchEvent(new Event(`keyup`))
