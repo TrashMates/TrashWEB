@@ -67,10 +67,10 @@
                     return false
                 }
 
-                // Query hasn't changed since last time
-                // if (latestQuery === $query.value) {
-                //     return false
-                // }
+                // Query is empty
+                if ($query.value === "") {
+                    return false
+                }
 
                 latestQuery = $query.value
                 console.log(`[QUERY] - ${query}`)

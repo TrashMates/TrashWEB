@@ -23,7 +23,7 @@ class CreateStreamsTable extends Migration
             $table->timestamps();
             $table->timestamp('stopped_at')->nullable();
 
-            $table->primary('id');
+            $table->primary(['id', 'game_id', 'user_id']);
             $table->foreign('game_id')->references('id')->on('games')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });

@@ -30,6 +30,8 @@ class GameController extends Controller
      */
     public function show(Game $game): View
     {
+        $game->load("streams.user");
+
         /**
          * @var Collection $streams
          */

@@ -16,7 +16,12 @@
                     <b>{{ $game->name }}</b>
                 </div>
                 <div class="card-footer">
-                    <a class="btn btn-sm btn-outline-primary" href="https://twitch.tv/directory/game/{{ $game->name }}">Twitch.tv</a>
+                    @if($game->stalking)
+                        <button id="updateStatus" class="btn btn-sm btn-raised btn-dark btn-block js-block">Disable stalking</button>
+                    @else
+                        <button id="updateStatus" class="btn btn-sm btn-raised btn-success btn-block js-block">Enable stalking</button>
+                    @endif
+                    <a class="btn btn-sm btn-outline-secondary btn-block" href="https://twitch.tv/directory/game/{{ $game->name }}">Twitch.tv</a>
                 </div>
             </div>
         </div>
@@ -25,34 +30,39 @@
             <canvas id="streams" width="100%"></canvas>
         </div>
 
-        <div class="col-12 my-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>user_id</th>
-                        <th>Language</th>
-                        <th>Title</th>
-                        <th>Started_at</th>
-                        <th>Stopped_at</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($streams as $streamDay)
-                        @foreach($streamDay as $stream)
-                            <tr>
-                                <td>{{ $stream->id }}</td>
-                                <td>{{ $stream->user_id }}</td>
-                                <td>{{ $stream->language }}</td>
-                                <td>{{ $stream->title }}</td>
-                                <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
-                                <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        @if($streams->isNotEmpty())
+            <div class="col-12 my-3">
+                <div class="card">
+                    <div class="card-header">Streams</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Language</th>
+                                    <th>Title</th>
+                                    <th>Started at</th>
+                                    <th>Stopped at</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($streams as $streamDay)
+                                    @foreach($streamDay as $stream)
+                                        <tr>
+                                            <td><a href="{{ route("twitch.users.show", [$stream->user]) }}">{{ $stream->user->username }}</a></td>
+                                            <td>{{ $stream->language }}</td>
+                                            <td>{{ $stream->title }}</td>
+                                            <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
+                                            <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 @endsection
 
@@ -103,15 +113,36 @@
         })
 
 
+        let url = `/api`
         document.querySelector(`#fetchStreams`).addEventListener(`click`, (e) => {
             e.preventDefault()
             e.stopPropagation()
 
-            let url = `/api`
             axios.post(`${url}/twitch/streams/fetch`, {game_id: {{ $game->id }}}).then((response) => {
                 location.reload(true)
             }).catch((e) => {
                 console.error(e.response.data)
+            })
+        })
+
+        document.querySelector(`#updateStatus`).addEventListener(`click`, (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            axios.put(`${url}/twitch/games/{{ $game->id }}`, {id: {{ $game->id }}, stalking: {{ $game->stalking ? "false" : "true" }}}).then(() => {
+                location.reload(true)
+            }).catch((e) => {
+                console.error(e.response.data)
+            })
+        })
+
+
+        document.querySelectorAll(`.js-block`).forEach((button) => {
+            button.addEventListener(`click`, (e) => {
+                document.querySelectorAll(`.js-block`).forEach((button) => {
+                    button.classList.add(`disabled`)
+                    button.disabled = true
+                })
             })
         })
     </script>

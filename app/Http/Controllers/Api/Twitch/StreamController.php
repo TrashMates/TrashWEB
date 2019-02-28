@@ -5,47 +5,16 @@ namespace App\Http\Controllers\Api\Twitch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Twitch\StreamRequest;
 use App\Models\Twitch\Stream;
+use App\Models\Twitch\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use TiCubius\TwitchAPI\Facades\Games;
+use TiCubius\TwitchAPI\Facades\Users;
 
 class StreamController extends Controller
 {
-    /**
-     * RECURSIVE - Fetches all streams of a Twitch game
-     *
-     * @param string                              $gameid
-     * @param \Illuminate\Support\Collection|null $streams
-     * @param string|null                         $pagination
-     * @return \Illuminate\Support\Collection
-     */
-    private function _fetchStreams(string $gameid, \Illuminate\Support\Collection $streams = null, string $pagination = null): \Illuminate\Support\Collection
-    {
-        if ($streams === null) {
-            $streams = collect();
-        }
-
-        $client = new Client();
-        $response = $client->get("https://api.twitch.tv/helix/streams?game_id={$gameid}&first=100&after={$pagination}", [
-            "headers" => ["Client-ID" => env("TWITCH_CLIENT_ID")],
-        ]);
-
-        $data = json_decode($response->getBody()->getContents());
-        $foundStreams = $data->data;
-
-        foreach ($foundStreams as $stream) {
-            $streams->push($stream);
-        }
-
-        if (count($streams) >= 100) {
-            $pagination = $data->pagination->cursor;
-            return $this->_fetchFollowers($gameid, $streams, $pagination);
-        }
-
-        return $streams;
-    }
-
     /**
      * GET - Shows all Twitch streams
      * GET - Finds all Twitch stream matching a query
@@ -71,7 +40,22 @@ class StreamController extends Controller
             "game_id" => "required|exists:games,id",
         ]);
 
-        $streams = $this->_fetchStreams($request->game_id);
+        $streams = Games::fetchStreams($request->game_id);
+        $users_id = $streams->pluck("user_id")->toArray();
+        $users = Users::fetchFromId($users_id);
+
+        foreach ($users as $user) {
+            User::updateOrCreate([
+                "id" => $user->id,
+            ], [
+                "broadcaster_type"  => $user->broadcaster_type ?? null,
+                "description"       => $user->description ?? null,
+                "offline_image_url" => $user->offline_image_url ?? null,
+                "profile_image_url" => $user->profile_image_url ?? null,
+                "type"              => $user->type ?? null,
+                "username"          => $user->display_name ?? $user->login,
+            ]);
+        }
 
         foreach ($streams as $stream) {
             Stream::updateOrCreate([

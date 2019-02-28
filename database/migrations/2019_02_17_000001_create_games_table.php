@@ -17,6 +17,7 @@ class CreateGamesTable extends Migration
             $table->string('id');
             $table->string('box_art_url')->nullable();
             $table->string('name');
+            $table->boolean('stalking');
             $table->timestamps();
 
             $table->primary('id');

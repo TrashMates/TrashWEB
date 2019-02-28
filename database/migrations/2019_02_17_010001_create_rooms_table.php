@@ -20,7 +20,7 @@ class CreateRoomsTable extends Migration
             $table->string('topic');
             $table->timestamps();
 
-            $table->primary('id');
+            $table->primary(['id', 'user_id']);
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }

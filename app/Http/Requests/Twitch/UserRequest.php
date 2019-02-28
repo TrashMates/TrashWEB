@@ -29,16 +29,16 @@ class UserRequest extends FormRequest
         $user_id = $this->user ? $this->user->id : "";
 
         return [
-            "id"                => "required|max:255|unique:users,id,{$user_id}",
+            "id"                => "sometimes|max:255|unique:users,id,{$user_id}",
             "broadcaster_type"  => "nullable|max:255",
             "description"       => "nullable|max:255",
             "offline_image_url" => "nullable|max:255",
             "profile_image_url" => "nullable|max:255",
+            "stalking"          => "nullable|boolean",
             "type"              => "nullable|max:255",
-            "username"          => "required|max:255",
+            "username"          => "sometimes|max:255",
             "created_at"        => "nullable|date",
             "updated_at"        => "nullable|date",
-
         ];
     }
 }

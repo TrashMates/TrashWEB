@@ -3,6 +3,7 @@
 namespace App\Models\Twitch;
 
 use App\Filters\Filterable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -98,5 +99,17 @@ class User extends Model
     public function streams(): HasMany
     {
         return $this->hasMany(Stream::class);
+    }
+
+
+    /**
+     * BUILDER - Fetch all "stalked" users
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeStalking(Builder $query): Builder
+    {
+        return $query->where("stalking", true);
     }
 }

@@ -6,9 +6,9 @@ use App\Filters\GameFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Twitch\GameRequest;
 use App\Models\Twitch\Game;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use TiCubius\TwitchAPI\Facades\Games;
 
 class GameController extends Controller
 {
@@ -38,19 +38,12 @@ class GameController extends Controller
             "name" => "required|max:255",
         ]);
 
-        $client = new Client();
-        $response = $client->get("https://api.twitch.tv/helix/games?name={$request->name}", [
-            "headers" => ["Client-ID" => env("TWITCH_CLIENT_ID")],
+        $game = Games::findFromName($request->name);
+        Game::updateOrCreate([
+            "id"          => $game->id,
+            "box_art_url" => $game->box_art_url,
+            "name"        => $game->name,
         ]);
-
-        $foundGames = json_decode($response->getBody()->getContents())->data;
-        foreach ($foundGames as $game) {
-            Game::updateOrCreate([
-                "id"          => $game->id,
-                "box_art_url" => $game->box_art_url,
-                "name"        => $game->name,
-            ]);
-        }
     }
 
     /**

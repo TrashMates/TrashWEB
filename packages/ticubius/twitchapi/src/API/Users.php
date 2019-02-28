@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: ticubius
- * Date: 24/02/19
- * Time: 23:18
- */
 
 namespace TiCubius\TwitchAPI\API;
 
@@ -129,7 +123,7 @@ class Users extends Api
         $data = json_decode($response->getBody()->getContents());
         $followers = array_merge($followers, $data->data);
 
-        if ((count($data->data) === 100) && count($followers) < 10000) {
+        if ((count($data->data) === 100) && count($followers) < 2000) {
             return $this->fetchFollowers($user_id, $followers, $data->pagination->cursor);
         }
 
@@ -154,7 +148,7 @@ class Users extends Api
         $data = json_decode($response->getBody()->getContents());
         $followers = array_merge($followers, $data->data);
 
-        if ((count($data->data) === 100) && count($followers) < 10000) {
+        if ((count($data->data) === 100) && count($followers) < 2000) {
             return $this->fetchFollowings($user_id, $followers, $data->pagination->cursor);
         }
 

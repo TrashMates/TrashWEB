@@ -29,10 +29,15 @@
                     @endisset
                 </div>
                 <div class="card-footer">
-                    <button id="updateFollowers" class="btn btn-sm btn-outline-primary btn-block">Update followers [{{ count($user->followers) }}]</button>
-                    <button id="updateFollowings" class="btn btn-sm btn-outline-primary btn-block">Update followings [{{ count($user->followings) }}]</button>
-                    <button id="updateUser" class="btn btn-sm btn-outline-primary btn-block">Update user</button>
-                    <a class="btn btn-sm btn-outline-secondary btn-block" href="https://twitch.tv/{{ $user->username }}">Twitch.tv channel</a>
+                    <button id="updateFollowers" class="btn btn-sm btn-raised btn-primary btn-block js-block">Update followers [{{ count($user->followers) }}]</button>
+                    <button id="updateFollowings" class="btn btn-sm btn-raised btn-primary btn-block js-block">Update followings [{{ count($user->followings) }}]</button>
+                    <button id="updateUser" class="btn btn-sm btn-raised btn-primary btn-block js-block">Update user</button>
+                    @if($user->stalking)
+                        <button id="updateStatus" class="btn btn-sm btn-raised btn-dark btn-block js-block">Disable stalking</button>
+                    @else
+                        <button id="updateStatus" class="btn btn-sm btn-raised btn-success btn-block js-block">Enable stalking</button>
+                    @endif
+                    <a class="btn btn-sm btn-outline-secondary btn-block" href="https://twitch.tv/{{ $user->username }}" target="_blank">Twitch.tv channel</a>
                 </div>
             </div>
         </div>
@@ -41,61 +46,97 @@
             <canvas id="events" width="100%"></canvas>
         </div>
 
-        <div class="col-12 col-lg-6 my-3">
-            <div class="card">
-                <div class="card-header" data-toggle="collapse" data-target="#followers">Followers</div>
-                <div id="followers" class="card-body collapse">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Broadcaster</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($user->followers as $follower)
+        @if($user->streams->isNotEmpty())
+            <div class="col-12 my-3">
+                <div class="card">
+                    <div class="card-header">Streams</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td class="align-middle">{{ $follower->username }}</td>
-                                    <td class="align-middle">{{ $follower->broadcaster_type }}</td>
-                                    <td class="align-middle" width="179px">
-                                        <a class="btn btn-primary" href="{{ route("twitch.users.show", [$follower]) }}">Show profile</a>
-                                    </td>
+                                    <th>Language</th>
+                                    <th>Game</th>
+                                    <th>Title</th>
+                                    <th>Started at</th>
+                                    <th>Stopped at</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($user->streams as $stream)
+                                    <tr>
+                                        <td>{{ $stream->language }}</td>
+                                        <td>{{ $stream->game }}</td>
+                                        <td>{{ $stream->title }}</td>
+                                        <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
+                                        <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endisset
 
-        <div class="col-12 col-lg-6 my-3">
-            <div class="card">
-                <div class="card-header" data-toggle="collapse" data-target="#followings">Following</div>
-                <div id="followings" class="card-body collapse">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Broadcaster</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($user->followings as $following)
+        @if($user->followers->isNotEmpty())
+            <div class="col-12 col-lg-6 my-3">
+                <div class="card">
+                    <div class="card-header" data-toggle="collapse" data-target="#followers">Followers</div>
+                    <div id="followers" class="card-body collapse">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td class="align-middle">{{ $following->username }}</td>
-                                    <td class="align-middle">{{ $following->broadcaster_type }}</td>
-                                    <td class="align-middle" width="179px">
-                                        <a class="btn btn-primary" href="{{ route("twitch.users.show", [$following]) }}">Show profile</a>
-                                    </td>
+                                    <th>Username</th>
+                                    <th>Broadcaster</th>
+                                    <th>Actions</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($user->followers as $follower)
+                                    <tr>
+                                        <td class="align-middle">{{ $follower->username }}</td>
+                                        <td class="align-middle">{{ $follower->broadcaster_type }}</td>
+                                        <td class="align-middle" width="179px">
+                                            <a class="btn btn-primary" href="{{ route("twitch.users.show", [$follower]) }}">Show profile</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
+
+        @if($user->followings->isNotEmpty())
+            <div class="col-12 col-lg-6 my-3">
+                <div class="card">
+                    <div class="card-header" data-toggle="collapse" data-target="#followings">Following</div>
+                    <div id="followings" class="card-body collapse">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Broadcaster</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($user->followings as $following)
+                                    <tr>
+                                        <td class="align-middle">{{ $following->username }}</td>
+                                        <td class="align-middle">{{ $following->broadcaster_type }}</td>
+                                        <td class="align-middle" width="179px">
+                                            <a class="btn btn-primary" href="{{ route("twitch.users.show", [$following]) }}">Show profile</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
 @endsection
@@ -104,39 +145,45 @@
 
     <script>
         let $ctx = document.querySelector("#events")
-        let eventsChart = new Chart($ctx, {
+        new Chart($ctx, {
             type: "bar",
             data: {
-                {{--labels: {!! $events->keys()  !!} ,--}}
                 datasets: [{
-                    label: '# of Events received',
-                    borderColor: "#b63636",
+                    label: "# Followers",
                     borderWidth: 1,
-                    data: {!! $followers->map(function ($items, $key) { return json_decode(json_encode(["x" => $key, "y" => $items->count()])); })->values()  !!},
-                    backgroundColor: '#B6363666',
+                    borderColor: "#FF000055",
+                    backgroundColor: "#FF000022",
+                    data:  {!! ($followers->map(function ($item, $key) { return ["x" => $key, "y" => $item->count()]; })->values()) !!},
                 }, {
-                    label: '# of Events given',
-                    data: {!! $followings->map(function ($items, $key) { return json_decode(json_encode(["x" => $key, "y" => $items->count()])); })->values()  !!},
-                    borderColor: '#1A7CB0',
-                    backgroundColor: '#1A7CB066',
+                    label: "# Followings",
                     borderWidth: 1,
+                    borderColor: "#0000FF22",
+                    backgroundColor: "#0000FF22",
+                    data:  {!! ($followings->map(function ($item, $key) { return ["x" => $key, "y" => $item->count()]; })->values()) !!},
                 }],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: {
+                    mode: null,
+                },
                 scales: {
+                    xAxes: [{
+                        type: "time",
+                        gridLines: {
+                            color: "rgba(0, 0, 0, 0)",
+                        },
+                        stacked: true,
+                        maxBarThickness: 10,
+                        time: {
+                            unit: 'day',
+                            distribution: "series",
+                        },
+                    }],
                     yAxes: [{
                         ticks: {
                             beginAtZero: true,
-                        },
-                    }],
-                    xAxes: [{
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            min: moment().subtract(2, "month"),
-                            tooltipFormat: 'lll',
                         },
                     }],
                 },
@@ -148,15 +195,14 @@
             $ctx.style.height = `${document.querySelector(`#user-card`).clientHeight}px`
         })
 
+
         let url = `/api`
         document.querySelector(`#updateUser`).addEventListener(`click`, (e) => {
             e.preventDefault()
             e.stopPropagation()
 
             axios.post(`${url}/twitch/users/fetch-user`, {id: {{ $user->id }}}).then(() => {
-
                 location.reload(true)
-
             }).catch((e) => {
                 console.error(e.response.data)
             })
@@ -167,9 +213,7 @@
             e.stopPropagation()
 
             axios.post(`${url}/twitch/users/fetch-followers`, {id: {{ $user->id }}}).then(() => {
-
                 location.reload(true)
-
             }).catch((e) => {
                 console.error(e.response.data)
             })
@@ -180,11 +224,30 @@
             e.stopPropagation()
 
             axios.post(`${url}/twitch/users/fetch-followings`, {id: {{ $user->id }}}).then(() => {
-
                 location.reload(true)
-
             }).catch((e) => {
                 console.error(e.response.data)
+            })
+        })
+
+        document.querySelector(`#updateStatus`).addEventListener(`click`, (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            axios.put(`${url}/twitch/users/{{ $user->id }}`, {id: {{ $user->id }}, stalking: {{ $user->stalking ? "false" : "true" }}}).then(() => {
+                location.reload(true)
+            }).catch((e) => {
+                console.error(e.response.data)
+            })
+        })
+
+
+        document.querySelectorAll(`.js-block`).forEach((button) => {
+            button.addEventListener(`click`, (e) => {
+                document.querySelectorAll(`.js-block`).forEach((button) => {
+                    button.classList.add(`disabled`)
+                    button.disabled = true
+                })
             })
         })
     </script>

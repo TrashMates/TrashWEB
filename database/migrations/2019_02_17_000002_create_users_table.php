@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->text('description')->nullable();
             $table->string('offline_image_url')->nullable();
             $table->string('profile_image_url')->nullable();
+            $table->boolean('stalking');
             $table->string('type')->nullable();
             $table->string('username');
             $table->timestamps();
