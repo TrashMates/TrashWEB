@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Api\Twitch;
 
+use App\Filters\StreamFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Twitch\StreamRequest;
+use App\Jobs\FetchStreamsForGame;
+use App\Models\Twitch\Game;
 use App\Models\Twitch\Stream;
-use App\Models\Twitch\User;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use TiCubius\TwitchAPI\Facades\Games;
-use TiCubius\TwitchAPI\Facades\Users;
 
 class StreamController extends Controller
 {
@@ -19,12 +17,13 @@ class StreamController extends Controller
      * GET - Shows all Twitch streams
      * GET - Finds all Twitch stream matching a query
      *
-     * @param Request $request
+     * @param Request      $request
+     * @param StreamFilter $filter
      * @return Collection
      */
-    public function index(Request $request): Collection
+    public function index(Request $request, StreamFilter $filter): Collection
     {
-        $streams = Stream::all();
+        $streams = Stream::filter($filter)->orderBy("created_at")->get();
 
         return ($request->has("with") ? $streams->load(explode(",", $request->with)) : $streams);
     }
@@ -40,42 +39,7 @@ class StreamController extends Controller
             "game_id" => "required|exists:games,id",
         ]);
 
-        $streams = Games::fetchStreams($request->game_id);
-        $users_id = $streams->pluck("user_id")->toArray();
-        $users = Users::fetchFromId($users_id);
-
-        foreach ($users as $user) {
-            User::updateOrCreate([
-                "id" => $user->id,
-            ], [
-                "broadcaster_type"  => $user->broadcaster_type ?? null,
-                "description"       => $user->description ?? null,
-                "offline_image_url" => $user->offline_image_url ?? null,
-                "profile_image_url" => $user->profile_image_url ?? null,
-                "type"              => $user->type ?? null,
-                "username"          => $user->display_name ?? $user->login,
-            ]);
-        }
-
-        foreach ($streams as $stream) {
-            Stream::updateOrCreate([
-                "id"      => $stream->id,
-                "game_id" => $stream->game_id,
-                "user_id" => $stream->user_id,
-            ], [
-                "language"   => $stream->language,
-                "title"      => $stream->title,
-                "type"       => $stream->type,
-                "created_at" => Carbon::parse($stream->started_at)->format("Y-m-d H:i:s"),
-            ]);
-        }
-
-        $expiredStreams = Stream::where("game_id", $request->game_id)->whereNull("stopped_at")->whereNotIn("id", $streams->pluck("id"))->get();
-        $expiredStreams->each(function (Stream $stream) {
-            $stream->update([
-                "stopped_at" => Carbon::now()->format("Y-m-d H:i:s"),
-            ]);
-        });
+        FetchStreamsForGame::dispatch(Game::find($request->game_id));
     }
 
     /**

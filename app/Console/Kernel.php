@@ -2,7 +2,8 @@
 
 namespace App\Console;
 
-use App\Jobs\FetchStreamsStalkedGames;
+use App\Jobs\FetchStreamsForGame;
+use App\Models\Twitch\Game;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -27,7 +28,12 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-        $schedule->job(new FetchStreamsStalkedGames)->everyMinute();
+        $schedule->call(function () {
+            foreach (Game::stalked()->get() as $game) {
+                echo $game->name;
+                FetchStreamsForGame::dispatch($game);
+            }
+        })->everyFiveMinutes();
     }
 
     /**

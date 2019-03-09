@@ -88,6 +88,7 @@
             }, 250)
 
         })
+        $query.dispatchEvent(new Event(`keyup`))
 
         /**
          * Twitch API

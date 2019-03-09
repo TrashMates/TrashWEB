@@ -21,7 +21,7 @@
                     @else
                         <button id="updateStatus" class="btn btn-sm btn-raised btn-success btn-block js-block">Enable stalking</button>
                     @endif
-                    <a class="btn btn-sm btn-outline-secondary btn-block" href="https://twitch.tv/directory/game/{{ $game->name }}">Twitch.tv</a>
+                    <a class="btn btn-sm btn-outline-secondary btn-block" href="https://twitch.tv/directory/game/{{ $game->name }}" target="_blank">Twitch.tv</a>
                 </div>
             </div>
         </div>
@@ -30,35 +30,24 @@
             <canvas id="streams" width="100%"></canvas>
         </div>
 
-        @if($streams->isNotEmpty())
+        @if($languages->isNotEmpty())
             <div class="col-12 my-3">
                 <div class="card">
                     <div class="card-header">Streams</div>
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Language</th>
-                                    <th>Title</th>
-                                    <th>Started at</th>
-                                    <th>Stopped at</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($streams as $streamDay)
-                                    @foreach($streamDay as $stream)
-                                        <tr>
-                                            <td><a href="{{ route("twitch.users.show", [$stream->user]) }}">{{ $stream->user->username }}</a></td>
-                                            <td>{{ $stream->language }}</td>
-                                            <td>{{ $stream->title }}</td>
-                                            <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
-                                            <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
-                                        </tr>
-                                    @endforeach
+                        <div>
+                            <label for="language">Select language</label>
+                            <select id="language" class="form-control" name="language">
+                                <option value="" selected>All languages</option>
+                                @foreach($languages as $language)
+                                    <option value="{{ $language }}">{{ $language }}</option>
                                 @endforeach
-                            </tbody>
-                        </table>
+                            </select>
+                        </div>
+
+                        <div id="stats">
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -73,22 +62,26 @@
         let streamChart = new Chart($ctx, {
             type: "line",
             data: {
-                labels: {!! $streams->keys()  !!} ,
                 datasets: [{
-                    label: '# of Streams',
-                    data: {!! $streams->map(function ($items, $key) { return json_decode(json_encode(["x" => $key, "y" => $items->count()])); })->values()  !!},
-                    backgroundColor: [
-                        '#B6363666',
-                    ],
-                    borderColor: [
-                        '#B63636',
-                    ],
+                    label: '# of Total Streams',
+                    data: [],
+                    backgroundColor: '#B6363666',
+                    borderColor: '#B63636',
+                    borderWidth: 1,
+                }, {
+                    label: '# of Finished Streams',
+                    data: [],
+                    backgroundColor: '#1A7CB066',
+                    borderColor: '##1A7CB0',
                     borderWidth: 1,
                 }],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                tooltips: {
+                    mode: 'x',
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
@@ -135,6 +128,38 @@
                 console.error(e.response.data)
             })
         })
+
+        document.querySelector(`#language`).addEventListener(`change`, (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            let language = e.target.value
+            axios.get(`${url}/twitch/streams?game_id={{ $game->id }}&language=${language}&stats`).then((response) => {
+                let allStreams = []
+                let finishedStreams = []
+
+                response.data.forEach((stream) => {
+                    allStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.total})
+                    finishedStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.finished})
+                })
+
+                // Remove previous chart data
+                streamChart.data.datasets.forEach((dataset) => {
+                    dataset.data.pop()
+                })
+
+                console.log(allStreams, finishedStreams)
+
+                // Add new chart data
+                streamChart.data.datasets[0].data = allStreams.sort()
+                streamChart.data.datasets[1].data = finishedStreams
+
+                streamChart.update()
+
+            }).catch(console.error)
+
+        })
+        document.querySelector(`#language`).dispatchEvent(new Event(`change`))
 
 
         document.querySelectorAll(`.js-block`).forEach((button) => {

@@ -30,18 +30,9 @@ class GameController extends Controller
      */
     public function show(Game $game): View
     {
-        $game->load("streams.user");
+        $languages = $game->streams()->select(["language"])->orderBy("language")->groupBy("language")->get()->pluck("language");
 
-        /**
-         * @var Collection $streams
-         */
-        $streams = $game->streams;
-
-        $streams = $streams->mapToGroups(function ($item, $key) {
-            return [$item['created_at']->startOfDay()->jsonSerialize()["date"] => $item];
-        });
-
-        return view("web.twitch.games.show", compact("game", "streams"));
+        return view("web.twitch.games.show", compact("game", "languages"));
     }
 
 }

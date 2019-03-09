@@ -65,7 +65,7 @@
                                 @foreach($user->streams as $stream)
                                     <tr>
                                         <td>{{ $stream->language }}</td>
-                                        <td>{{ $stream->game }}</td>
+                                        <td><a href="{{ route("twitch.games.show", [$stream->game]) }}">{{ $stream->game->name }}</a></td>
                                         <td>{{ $stream->title }}</td>
                                         <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
                                         <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>

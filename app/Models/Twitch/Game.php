@@ -43,7 +43,7 @@ class Game extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeStalking(Builder $query): Builder
+    public function scopeStalked(Builder $query): Builder
     {
         return $query->where("stalking", true);
     }

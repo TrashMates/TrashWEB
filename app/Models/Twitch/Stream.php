@@ -2,12 +2,15 @@
 
 namespace App\Models\Twitch;
 
+use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Stream extends Model
 {
+    use Filterable;
+
     /**
      * All columns that should be treated as dates
      *
