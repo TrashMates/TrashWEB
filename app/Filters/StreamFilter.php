@@ -70,7 +70,7 @@ class StreamFilter extends QueryFilters
     public function stats(?string $query = null): ?Builder
     {
         if ($this->request->has("stats")) {
-            return $this->builder->selectRaw("created_at, COUNT(stopped_at) AS finished, COUNT(*) AS total")->groupBy(\DB::raw("DAY(created_at), MONTH(created_at)"));
+            return $this->builder->selectRaw("created_at, language, COUNT(stopped_at) AS finished, COUNT(*) AS total")->groupBy(\DB::raw("DAY(created_at), MONTH(created_at), language"));
         }
 
         return null;
@@ -85,7 +85,7 @@ class StreamFilter extends QueryFilters
     public function title(?string $query = null): ?Builder
     {
         if ($query) {
-            return $this->builder->where("title", "LIKE", "%{$$query}%");
+            return $this->builder->where("title", "LIKE", "%{$query}%");
         }
 
         return null;

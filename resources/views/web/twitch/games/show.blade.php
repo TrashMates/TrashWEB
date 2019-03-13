@@ -139,8 +139,26 @@
                 let finishedStreams = []
 
                 response.data.forEach((stream) => {
-                    allStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.total})
-                    finishedStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.finished})
+                    let allStreamIndex = allStreams.findIndex((s) => {
+                        return s.x == moment(stream.created_at).format("YYYY-MM-DD")
+                    })
+
+                    if (allStreamIndex !== -1) {
+                        allStreams[allStreamIndex].y += stream.total
+                    } else {
+                        allStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.total})
+                    }
+
+
+                    let finishedStreamIndex = finishedStreams.findIndex((s) => {
+                        return s.x == moment(stream.created_at).format("YYYY-MM-DD")
+                    })
+
+                    if (finishedStreamIndex !== -1) {
+                        finishedStreams[finishedStreamIndex].y += stream.finished
+                    } else {
+                        finishedStreams.push({x: moment(stream.created_at).format("YYYY-MM-DD"), y: stream.finished})
+                    }
                 })
 
                 // Remove previous chart data
@@ -148,11 +166,9 @@
                     dataset.data.pop()
                 })
 
-                console.log(allStreams, finishedStreams)
-
                 // Add new chart data
                 streamChart.data.datasets[0].data = allStreams.sort()
-                streamChart.data.datasets[1].data = finishedStreams
+                streamChart.data.datasets[1].data = finishedStreams.sort()
 
                 streamChart.update()
 
