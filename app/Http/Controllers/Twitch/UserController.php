@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
-        $user->load("streams.game");
+        $user->load("streams.game", "streams.metadata");
 
         /**
          * FETCH ALL FOLLOWERS

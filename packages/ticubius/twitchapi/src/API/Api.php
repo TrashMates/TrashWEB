@@ -71,6 +71,7 @@ class Api
             $url = "https://id.twitch.tv/oauth2/token?client_id={$this->clientId}&client_secret={$this->clientSecret}&grant_type=client_credentials";
             $response = $this->client->post($url);
 
+
             $this->bearerToken = (json_decode($response->getBody()->getContents())->access_token);
         }
 

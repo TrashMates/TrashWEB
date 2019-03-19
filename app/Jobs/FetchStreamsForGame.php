@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Twitch\Game;
 use App\Models\Twitch\Stream;
+use App\Models\Twitch\StreamMetadata;
 use App\Models\Twitch\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -64,6 +65,12 @@ class FetchStreamsForGame implements ShouldQueue
                 "title"      => $stream->title,
                 "type"       => $stream->type,
                 "created_at" => Carbon::parse($stream->started_at)->format("Y-m-d H:i:s"),
+            ]);
+
+            StreamMetadata::create([
+                "stream_id" => $stream->id,
+                "number"    => 0,
+                "viewers"   => $stream->viewer_count,
             ]);
         }
 

@@ -17,6 +17,21 @@ class StreamFilter extends QueryFilters
 
 
     /**
+     * FILTER - Skip the first X results
+     *
+     * @param string|null $query
+     * @return Builder|null
+     */
+    public function after(?string $query = null): ?Builder
+    {
+        if ($query) {
+            return $this->builder->skip($query);
+        }
+
+        return null;
+    }
+
+    /**
      * FILTER - Search all streams of a specific game_id
      *
      * @param string|null $query
@@ -44,6 +59,19 @@ class StreamFilter extends QueryFilters
         }
 
         return null;
+    }
+
+    /**
+     * FILTER - Select only the latest X elements
+     *
+     * @param int|null $query
+     * @return Builder|null
+     */
+    public function limit(?int $query = null): ?Builder
+    {
+        if ($query) {
+            return $this->builder->orderBy("created_at", "DESC")->take($query);
+        }
     }
 
     /**

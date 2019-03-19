@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-12 col-sm-6 col-lg-3">
             <div id="user-card" class="card">
-                <img class="card-img-top" src="{{ $user->profile_image_url }}" alt="">
+                <img id="user-image" class="card-img-top" src="{{ $user->profile_image_url }}" alt="">
                 <div class="card-body text-center">
                     <b>{{ $user->username }}</b>
                     @if($user->description !== "")
@@ -43,7 +43,11 @@
         </div>
 
         <div class="col-12 col-sm-6 col-lg-9">
-            <canvas id="events" width="100%"></canvas>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="events" width="100%"></canvas>
+                </div>
+            </div>
         </div>
 
         @if($user->streams->isNotEmpty())
@@ -51,28 +55,34 @@
                 <div class="card">
                     <div class="card-header">Streams</div>
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Language</th>
-                                    <th>Game</th>
-                                    <th>Title</th>
-                                    <th>Started at</th>
-                                    <th>Stopped at</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($user->streams as $stream)
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover table-striped">
+                                <thead>
                                     <tr>
-                                        <td>{{ $stream->language }}</td>
-                                        <td><a href="{{ route("twitch.games.show", [$stream->game]) }}">{{ $stream->game->name }}</a></td>
-                                        <td>{{ $stream->title }}</td>
-                                        <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
-                                        <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
+                                        <th>Language</th>
+                                        <th>Game</th>
+                                        <th>Title</th>
+                                        <th>Avg</th>
+                                        <th>Started at</th>
+                                        <th>Stopped at</th>
+                                        <th>Length</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($user->streams as $stream)
+                                        <tr>
+                                            <td>{{ $stream->language }}</td>
+                                            <td><a href="{{ route("twitch.games.show", [$stream->game]) }}">{{ $stream->game->name }}</a></td>
+                                            <td>{{ $stream->title }}</td>
+                                            <td>{{ $stream->metadata->count() ? number_format($stream->metadata()->average("viewers"), 2) : "No data" }}</td>
+                                            <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
+                                            <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>
+                                            <td>{{ $stream->stopped_at ? $stream->stopped_at->diff($stream->created_at)->format("%H:%I:%S") . " hours" : "" }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,26 +93,24 @@
                 <div class="card">
                     <div class="card-header" data-toggle="collapse" data-target="#followers">Followers</div>
                     <div id="followers" class="card-body collapse">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Broadcaster</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($user->followers as $follower)
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover table-striped">
+                                <thead>
                                     <tr>
-                                        <td class="align-middle">{{ $follower->username }}</td>
-                                        <td class="align-middle">{{ $follower->broadcaster_type }}</td>
-                                        <td class="align-middle" width="179px">
-                                            <a class="btn btn-primary" href="{{ route("twitch.users.show", [$follower]) }}">Show profile</a>
-                                        </td>
+                                        <th>Username</th>
+                                        <th>Broadcaster</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($user->followers as $follower)
+                                        <tr>
+                                            <td class="align-middle"><a href="{{ route("twitch.users.show", [$follower]) }}">{{ $follower->username }}</a></td>
+                                            <td class="align-middle">{{ $follower->broadcaster_type }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,26 +121,24 @@
                 <div class="card">
                     <div class="card-header" data-toggle="collapse" data-target="#followings">Following</div>
                     <div id="followings" class="card-body collapse">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Broadcaster</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($user->followings as $following)
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover table-striped">
+                                <thead>
                                     <tr>
-                                        <td class="align-middle">{{ $following->username }}</td>
-                                        <td class="align-middle">{{ $following->broadcaster_type }}</td>
-                                        <td class="align-middle" width="179px">
-                                            <a class="btn btn-primary" href="{{ route("twitch.users.show", [$following]) }}">Show profile</a>
-                                        </td>
+                                        <th>Username</th>
+                                        <th>Broadcaster</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($user->followings as $following)
+                                        <tr>
+                                            <td class="align-middle"><a href="{{ route("twitch.users.show", [$following]) }}">{{ $following->username }}</a></td>
+                                            <td class="align-middle">{{ $following->broadcaster_type }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,6 +150,10 @@
 @section("scripts")
 
     <script>
+        // ---
+        // - ChartJS
+        // ---
+
         let $ctx = document.querySelector("#events")
         new Chart($ctx, {
             type: "bar",
@@ -190,11 +200,12 @@
             },
         })
 
+    </script>
 
-        window.addEventListener(`resize`, () => {
-            $ctx.style.height = `${document.querySelector(`#user-card`).clientHeight}px`
-        })
-
+    <script>
+        // ---
+        // - Buttons
+        // ---
 
         let url = `/api`
         document.querySelector(`#updateUser`).addEventListener(`click`, (e) => {
@@ -249,6 +260,35 @@
                     button.disabled = true
                 })
             })
+        })
+    </script>
+
+    <script>
+        // ---
+        // - EVENT SYSTEM
+        // ---
+        window.addEventListener(`resize`, () => {
+            $ctx.parentNode.parentNode.style.height = `${document.querySelector(`#user-card`).clientHeight}px`
+            $ctx.style.height = `${document.querySelector(`#user-card`).clientHeight - 40}px`
+        })
+
+
+        // ---
+        // - When the document is loaded
+        // - We resize
+        // - And we fetch data
+        // ---
+        document.addEventListener("DOMContentLoaded", (e) => {
+            window.dispatchEvent(new Event(`resize`))
+        })
+
+        // ---
+        // - When the image is loaded
+        // - It will probably change the height of the card
+        // - We have to trigger the resize again
+        // ---
+        document.querySelector(`#user-image`).addEventListener(`load`, (e) => {
+            window.dispatchEvent(new Event(`resize`))
         })
     </script>
 

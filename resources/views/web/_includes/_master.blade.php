@@ -6,11 +6,11 @@
 
         <title>TrashWEB</title>
         <link rel="stylesheet" href="{{ asset("assets/css/libraries/egn-progressbar.css") }}">
-        <link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap-material-design.min.css") }}">
-        <link rel="stylesheet" href="{{ asset("assets/css/app.css") }}">
     </head>
 
     <body>
+        <link rel="stylesheet" href="{{ asset("assets/css/libraries/bootstrap-material-design.min.css") }}">
+        <link rel="stylesheet" href="{{ asset("assets/css/app.css") }}">
 
         <div class="container-fluid h-100">
             @include("web._includes.navbar")
@@ -20,7 +20,7 @@
         </div>
 
         <script src="{{ asset("assets/js/libraries/jquery-3.3.1.min.js") }}"></script>
-        <script src="{{ asset("assets/js/libraries/font-awesome.min.js") }}"></script>
+        {{--<script src="{{ asset("assets/js/libraries/font-awesome.min.js") }}"></script>--}}
         <script src="{{ asset("assets/js/libraries/axios.min.js") }}"></script>
         <script src="{{ asset("assets/js/libraries/moment.min.js") }}"></script>
         <script src="{{ asset("assets/js/libraries/chart.bundle.min.js") }}"></script>
