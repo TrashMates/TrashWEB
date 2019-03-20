@@ -69,7 +69,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($user->streams as $stream)
+                                    @foreach($user->streams->sortByDesc("created_at") as $stream)
                                         <tr>
                                             <td>{{ $stream->language }}</td>
                                             <td><a href="{{ route("twitch.games.show", [$stream->game]) }}">{{ $stream->game->name }}</a></td>
