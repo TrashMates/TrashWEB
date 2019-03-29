@@ -73,7 +73,7 @@
                                         <tr>
                                             <td>{{ $stream->language }}</td>
                                             <td><a href="{{ route("twitch.games.show", [$stream->game]) }}">{{ $stream->game->name }}</a></td>
-                                            <td>{{ $stream->title }}</td>
+                                            <td><a href="{{ route("twitch.streams.show", [$stream]) }}">{{ $stream->title }}</a></td>
                                             <td>{{ $stream->metadata->count() ? number_format($stream->metadata()->average("viewers"), 2) : "No data" }}</td>
                                             <td>{{ $stream->created_at->format("d/m/Y H:i:s") }}</td>
                                             <td>{{ $stream->stopped_at ? $stream->stopped_at->format("d/m/Y H:i:s") : ""}}</td>

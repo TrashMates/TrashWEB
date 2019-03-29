@@ -17,5 +17,6 @@ Route::group(["prefix" => "twitch", "as" => "twitch.", "namespace" => "Twitch"],
 
     Route::resource("games", "GameController");
     Route::resource("users", "UserController");
+    Route::resource("streams", "StreamController");
 
 });

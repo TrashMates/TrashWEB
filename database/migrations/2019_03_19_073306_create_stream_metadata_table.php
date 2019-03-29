@@ -23,7 +23,8 @@ class CreateStreamMetadataTable extends Migration
             $table->foreign('stream_id')->references('id')->on('streams');
         });
 
-        DB::unprepared('CREATE TRIGGER `stream_metadata_bi` BEFORE INSERT ON `stream_metadata` FOR EACH ROW SET new.number = (SELECT (IFNULL(MAX(number), 0) +1) FROM stream_metadata WHERE stream_id = new.stream_id);;
+        DB::unprepared('CREATE TRIGGER `stream_metadata_bi` BEFORE INSERT ON `stream_metadata` FOR EACH ROW 
+        SET new.number = (SELECT (IFNULL(MAX(number), 0) +1) FROM stream_metadata WHERE stream_id = new.stream_id)
         ');
     }
 

@@ -265,11 +265,10 @@
                         HTMLStream.innerHTML = `<td>${stream.id}</td>`
                         HTMLStream.innerHTML += `<td>${stream.language}</td>`
                         HTMLStream.innerHTML += `<td><a href="{{ route("twitch.users.show", "") }}/${stream.user.id}">${stream.user.username}</a></td>`
-                        HTMLStream.innerHTML += `<td>${stream.title}</td>`
+                        HTMLStream.innerHTML += `<td><a href="{{ route("twitch.streams.show", "") }}/${stream.id}">${stream.title}</a></td>`
                         HTMLStream.innerHTML += `<td>${streamAvg}</td>`
                         HTMLStream.innerHTML += `<td>${moment(stream.created_at).format("DD/MM/YYYY HH:mm:ss")}</td>`
                         HTMLStream.innerHTML += `<td>${stream.stopped_at ? moment(stream.stopped_at).format("DD/MM/YYYY HH:mm:ss") : ""}</td>`
-                        //HTMLStream.innerHTML += `<td>${stream.stopped_at ? moment.utc(moment.duration(moment(stream.stopped_at).diff(stream.created_at)).asMilliseconds()).format("HH:mm:ss") : ""}</td>`
                         HTMLStream.innerHTML += `<td>${streamDuration ? (streamDuration / 60).toFixed(0) + ":" + ('0' + (streamDuration % 60).toFixed(0)).slice(-2) : ""}</td>`
 
                         tableBody.append(HTMLStream)
