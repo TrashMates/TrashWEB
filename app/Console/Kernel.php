@@ -6,6 +6,7 @@ use App\Jobs\FetchStreamsForGame;
 use App\Models\Twitch\Game;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -20,7 +21,7 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -29,9 +30,14 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->call(function () {
-            foreach (Game::stalked()->get() as $game) {
-                echo $game->name;
-                FetchStreamsForGame::dispatch($game);
+            $games = Game::stalked()->get();
+            foreach ($games as $game) {
+                try {
+                    echo $game->name;
+                    FetchStreamsForGame::dispatch($game);
+                } catch (\Exception $e) {
+                    Log::error($e);
+                }
             }
         })->everyFiveMinutes();
     }

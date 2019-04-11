@@ -23,7 +23,7 @@ class StreamController extends Controller
      */
     public function index(Request $request, StreamFilter $filter): Collection
     {
-        $streams = Stream::filter($filter)->orderBy("created_at")->get();
+        $streams = Stream::filter($filter)->orderBy("streams.created_at")->get();
 
         return ($request->has("with") ? $streams->load(explode(",", $request->with)) : $streams);
     }

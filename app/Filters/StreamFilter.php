@@ -90,15 +90,30 @@ class StreamFilter extends QueryFilters
     }
 
     /**
-     * FILTER - Select live counts
+     * FILTER - Select streams stats
      *
      * @param string|null $query
      * @return Builder|null
      */
-    public function stats(?string $query = null): ?Builder
+    public function streamsStats(?string $query = null): ?Builder
     {
-        if ($this->request->has("stats")) {
+        if ($this->request->has("streamsStats")) {
             return $this->builder->selectRaw("created_at, language, COUNT(stopped_at) AS finished, COUNT(*) AS total")->groupBy(\DB::raw("DAY(created_at), MONTH(created_at), language"));
+        }
+
+        return null;
+    }
+
+    /**
+     * FILTER - Select streams viewers stats
+     *
+     * @param string|null $query
+     * @return Builder|null
+     */
+    public function viewersStats(?string $query = null): ?Builder
+    {
+        if ($this->request->has("viewersStats")) {
+            return $this->builder->selectRaw("DAY(streams.created_at) AS day, MONTH(streams.created_at) AS month, YEAR(streams.created_at) AS year, language, AVG(stream_metadata.viewers) AS average")->join("stream_metadata", "id", "=", "stream_id")->groupBy(\DB::raw("day, month, year, language"));
         }
 
         return null;

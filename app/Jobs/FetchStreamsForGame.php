@@ -64,7 +64,7 @@ class FetchStreamsForGame implements ShouldQueue
                 "language"   => $stream->language,
                 "title"      => $stream->title,
                 "type"       => $stream->type,
-                "created_at" => Carbon::parse($stream->started_at)->format("Y-m-d H:i:s"),
+                "created_at" => Carbon::parse($stream->started_at)->setTimezone("Europe/Paris")->format("Y-m-d H:i:s"),
             ]);
 
             StreamMetadata::create([

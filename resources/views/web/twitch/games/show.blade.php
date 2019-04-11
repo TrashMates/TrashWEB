@@ -109,19 +109,27 @@
         let streamChart = new Chart($ctx, {
             type: "line",
             data: {
-                datasets: [{
-                    label: '# of Total Streams',
-                    data: [],
-                    backgroundColor: '#B6363666',
-                    borderColor: '#B63636',
-                    borderWidth: 1,
-                }, {
-                    label: '# of Finished Streams',
-                    data: [],
-                    backgroundColor: '#1A7CB066',
-                    borderColor: '#1A7CB0',
-                    borderWidth: 1,
-                }],
+                datasets: [
+                    //     {
+                    //     label: '# of Total Streams',
+                    //     data: [],
+                    //     backgroundColor: '#B6363666',
+                    //     borderColor: '#B63636',
+                    //     borderWidth: 1,
+                    // }, {
+                    //     label: '# of Finished Streams',
+                    //     data: [],
+                    //     backgroundColor: '#1A7CB066',
+                    //     borderColor: '#1A7CB0',
+                    //     borderWidth: 1,
+                    // }, {
+                    //     label: '# of Average Viewers',
+                    //     data: [],
+                    //     backgroundColor: '#1A7CB066',
+                    //     borderColor: '#48df98',
+                    //     borderWidth: 1,
+                    // }
+                ],
             },
             options: {
                 responsive: true,
@@ -196,7 +204,10 @@
         let updateCharts = (language, title) => {
             console.log(`updateCharts(${language}, ${title})`)
 
-            axios.get(`${url}/twitch/streams?game_id={{ $game->id }}&language=${language}&title=${title}&stats`).then((response) => {
+            // Remove all datasets
+            streamChart.data.datasets = []
+
+            axios.get(`${url}/twitch/streams?game_id={{ $game->id }}&language=${language}&title=${title}&streamsStats`).then((response) => {
                 let allStreams = []
                 let finishedStreams = []
 
@@ -223,14 +234,56 @@
                     }
                 })
 
-                // Remove previous chart data
-                streamChart.data.datasets.forEach((dataset) => {
-                    dataset.data.pop()
+                // Add new chart data
+                streamChart.data.datasets.push({
+                    label: '# of Total Streams',
+                    backgroundColor: '#B6363666',
+                    borderColor: '#B63636',
+                    borderWidth: 1,
+                    data: allStreams.sort(),
                 })
 
-                // Add new chart data
-                streamChart.data.datasets[0].data = allStreams.sort()
-                streamChart.data.datasets[1].data = finishedStreams.sort()
+                streamChart.data.datasets.push({
+                    label: '# of Finished Streams',
+                    backgroundColor: '#1A7CB066',
+                    borderColor: '#1A7CB0',
+                    borderWidth: 1,
+                    data: finishedStreams.sort(),
+                })
+
+                streamChart.update()
+            }).catch(console.error)
+
+
+            axios.get(`${url}/twitch/streams?game_id={{ $game->id }}&language=${language}&title=${title}&viewersStats`).then((response) => {
+
+                let averagePerDay = []
+
+                response.data.forEach((stream) => {
+
+                    let langIndex = averagePerDay.findIndex((a) => {
+                        return a.language === stream.language
+                    })
+
+                    if (langIndex !== -1) {
+                        averagePerDay[langIndex].data.push({x: `${stream.year}-${stream.month}-${stream.day}`, y: stream.average, label: stream.language})
+                    } else {
+                        averagePerDay.push({language: stream.language, data: [{x: `${stream.year}-${stream.month}-${stream.day}`, y: stream.average, label: stream.language}]})
+                    }
+                })
+
+                averagePerDay.forEach((average) => {
+                    // Add new chart data
+                    streamChart.data.datasets.push({
+                        label: `Average viewers (${average.language})`,
+                        backgroundColor: '#2AB03C66',
+                        borderColor: '#2AB03C',
+                        borderWidth: 1,
+                        hidden: (averagePerDay.length > 1),
+                        data: average.data.sort(),
+                    })
+                })
+                console.log(averagePerDay)
 
                 streamChart.update()
 
@@ -259,7 +312,9 @@
                 response.data.forEach((stream) => {
                     if (tableBody.children.length <= 100) {
                         let streamDuration = stream.stopped_at ? (moment.duration(moment(stream.stopped_at).diff(stream.created_at)).asMinutes()) : null
-                        let streamAvg = stream.metadata.length ? (stream.metadata.map((s) => s.viewers).reduce((a, b) => {return a + b}) / stream.metadata.length).toFixed(2) : "No data"
+                        let streamAvg = stream.metadata.length ? (stream.metadata.map((s) => s.viewers).reduce((a, b) => {
+                            return a + b
+                        }) / stream.metadata.length).toFixed(2) : "No data"
 
                         let HTMLStream = document.createElement(`tr`)
                         HTMLStream.innerHTML = `<td>${stream.id}</td>`
